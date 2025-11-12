@@ -1,0 +1,1309 @@
+# 0. Front Matter
+
+**The Harmonic Scientific Method: A Falsifiable Framework for Low-Order Phase Coupling Detection and Control**
+
+### Running Title
+
+*Harmonic Scientific Method*
+
+### Authors & Affiliations
+
+**Jake A. Hallett** (corresponding)
+
+[affiliation]
+
+[email]
+
+[Co-authors if any]
+
+---
+
+### Abstract
+
+We present the **Harmonic Scientific Method (HSM)**, a complete, falsifiable framework for detecting, testing, and controlling low-order phase couplings in complex systems. Building on the **Low-Order Wins** renormalization-group principle, HSM operationalizes the hypothesis that persistent structure in coupled oscillatory systems concentrates at small integer frequency ratios $(p{:}q)$ with $p+q le P$. The method specifies: (i) four foundational axioms grounding all inferences in phase-space observables and admissible transformations; (ii) a **locking kernel** $K_{ab}(p{:}q)$ that penalizes both relation order and frequency detuning, yielding dimensionless coupling scores; (iii) **Edge tests E1–E4** serving as hard falsification gates (vibration proof, symmetry invariance, micro-perturbation causality, out-of-sample persistence); (iv) a **Delta Coupling Operator (DCO)** that maps observed phases to accepted locks, primary graphs, RG-consistency flags, harmony gains, and minimal steering plans; (v) pre-registered null families (spectral, phase-shuffle, mechanistic surrogates) with BH-FDR control at $q le 0.05$; and (vi) two compact theorems proving RG irrelevance of high-order/detuned couplings and monotone harmony improvement under greedy low-order steering.
+
+The framework is **platform-agnostic**: no code dependencies, only abstract operators and falsifiable predictions. We prove that under coarse-graining by scale $ell$, couplings obey $\frac{dK}{d\ell} = (2 - \Delta_{p:q})K - \Lambda K^3$ with $Delta_{p:q} = d + eta(p+q) + zeta|omega_b/omega_a - p/q|$, forcing decay of high-order modes. Acceptance requires clearing all null thresholds **and** passing all four Edge tests—no partial credit. Version 1.1 extends to non-sinusoidal clocks (event trains, semantic templates, mixed-radix cycles), adds observer-swap persistence to E2/E4, enforces micro-nudge monotonicity in E3, and introduces lock-churn $\chi$ to characterize adaptive regimes.
+
+We provide a one-command reproducibility capsule, explicit failure modes (nonstationarity, aliasing, octave confusion), quantitative predictions for neural PAC, Josephson arrays, optomechanics, and biological rhythms, and a complete researcher-degrees-of-freedom ledger. The method elevates findings from "statistical fit" to **law-status** via persistence under symmetry + RG + cross-domain integer stability, offering a rigorous alternative to post-hoc pattern-finding in complex time series.
+
+---
+
+### Keywords
+
+Phase coupling; renormalization group; falsifiability; locking kernel; harmonic analysis; oscillatory systems; control theory; reproducibility
+
+### MSC / PACS Classifications
+
+**MSC:** 37M10 (Dynamical systems approximation), 37A25 (Ergodicity), 94A12 (Signal theory), 93B52 (Feedback control)
+
+### Data and Code Availability
+
+All protocols, configuration schemas, and validation generators are provided in language-agnostic pseudocode. Reference implementations and a containerized replication capsule will be deposited at a long-term DOI upon acceptance.
+
+### Conflict of Interest
+
+The authors declare no competing interests.
+
+---
+
+# 1. Introduction
+
+## 1.1 Motivation: The Problem of Spurious Structure
+
+Across neuroscience, nonlinear dynamics, quantum systems, and biological networks, researchers routinely report "cross-frequency coupling," "mode-locking," "phase synchronization," and "harmonic relationships." Yet a troubling pattern persists: **most reported couplings fail independent replication**, exhibit parameter sensitivity consistent with overfitting, and lack principled rejection criteria.
+
+The core pathology is threefold:
+
+**1. Post-hoc flexibility.** Standard workflows permit dozens of undocumented choices (filter orders, window lengths, coupling estimators, significance thresholds), enabling researchers to "search until significant" without controlling family-wise error.
+
+**2. Absence of hard falsification gates.** Conventional methods test whether coupling $K \neq 0$ against a single null (often inadequate phase-scrambling) but impose no mechanistic consistency checks. A coupling can "pass" statistical tests yet violate basic physical constraints (e.g., fail time-reversal symmetry, disappear under coarse-graining, exhibit non-integer frequency ratios).
+
+**3. No operational connection to dynamical principles.** Coupling estimates are treated as final outputs rather than inputs to a **testable generative model**. If low-order integer ratios truly dominate—as suggested by Arnold tongues, KAM theory, and the empirical ubiquity of simple harmonic relationships—this should manifest as **falsifiable structure** in how couplings decay with order, persist under perturbation, and respond to controlled interventions.
+
+The **Harmonic Scientific Method** addresses these failures by **inverting the workflow**: instead of searching for couplings and post-hoc testing their significance, we:
+
+- **Pre-register** a complete inference pipeline (axioms, estimators, nulls, gates, control protocol);
+- **Derive** testable predictions from the Low-Order Wins RG principle;
+- **Enforce** four hard Edge tests (E1–E4) as logical prerequisites for any downstream claim;
+- **Report** a single composite score (DeltaScore) aggregating lock strength, harmony gain, RG persistence, and out-of-sample validation;
+- **Falsify cleanly** when any gate fails, with explicit enumeration of alternative mechanisms.
+
+---
+
+## 1.2 Core Principle: Low-Order Wins as Operational Law
+
+The foundation is the **Low-Order Wins (LOW)** principle[[1]](https://www.notion.so/Low-Order-Wins-A-Renormalization-Group-Principle-for-Integer-Relation-Persistence-f5577d610f8c4470a8160254a620751c?pvs=21), which states that after detuning normalization and fixed coarse-graining, effective scaling dimensions $\Delta_{(p,q)}$ increase with relation order $r = p + q$. Under the RG flow
+
+$$
+\frac{dK_{(p,q)}}{d\ell} = \bigl(2 - \Delta_{(p,q)} - \Lambda K_{(p,q)}\bigr) K_{(p,q)},
+$$
+
+couplings with $\Delta_{(p,q)} < 2$ persist (RG-relevant) while those with $\Delta_{(p,q)} > 2$ decay exponentially (RG-irrelevant). Since $\Delta_{(p,q)} \approx d + \eta(p+q) + \zeta|\text{detune}|$ increases with both order and detuning, **only low-order, near-tuned ratios survive** repeated coarse-graining.
+
+HSM operationalizes LOW by:
+
+- Defining a **locking kernel** $K_{ab}(p{:}q) = \langle \sin(p\theta_b - q\theta_a) \rangle \cdot e^{-\lambda(p+q)} \cdot e^{-\gamma|\omega_b/\omega_a - p/q|}$ that explicitly penalizes order and detune;
+- Requiring **Edge test E4** to verify high-order decay under coarse-graining;
+- Using **micro-perturbations (E3)** to confirm that nudging frequencies toward hypothesized locks increases $K$ and harmony $H^*$;
+- Constructing **null families** that preserve spectral structure while destroying cross-phase information, then demanding that observed locks beat **all three null types** simultaneously.
+
+<aside>
+⚡
+
+**Key Insight:** HSM is not a data-analysis technique—it is a **scientific method**. Just as the experimental method prescribes control groups, blinding, and pre-registration, HSM prescribes axioms, gates, and falsification hooks. A "successful" HSM analysis is one where the system **passes all tests**, not one where the researcher finds a significant $p$-value.
+
+</aside>
+
+---
+
+## 1.3 Relationship to Prior Work
+
+### Phase-Amplitude Coupling (PAC) and Cross-Frequency Coupling
+
+Neuroscience PAC methods (modulation index, mean vector length, phase-locking value) estimate coupling strength but lack:
+
+- **Order-dependent priors** (all $(p,q)$ treated equally);
+- **Detuning normalization** (no accounting for how close $\omega_b/\omega_a$ is to $p/q$);
+- **RG consistency** (no requirement that couplings survive coarse-graining);
+- **Falsification gates** (typically one null type, often inadequate).
+
+HSM generalizes PAC by embedding it in a falsifiable RG framework with pre-registered hyperparameters.
+
+### Arnold Tongues and Mode-Locking Theory
+
+Classical work on circle maps, driven oscillators, and Josephson junctions establishes that locking regions ("tongues") in parameter space narrow with increasing order $p+q$. HSM:
+
+- Quantifies this narrowing via the detuning penalty $e^{-gamma|omega_b/omega_a - p/q|}$;
+- Proves tongue-width decay as **Theorem 1** (RG irrelevance);
+- Tests predictions with **E3** (micro-nudge causality) and **E4** (out-of-sample persistence).
+
+### Renormalization Group on Discrete Structures
+
+While RG methods dominate continuum field theory, their application to **discrete integer relations** is recent. LOW[[1]](https://www.notion.so/Low-Order-Wins-A-Renormalization-Group-Principle-for-Integer-Relation-Persistence-f5577d610f8c4470a8160254a620751c?pvs=21) provides the theoretical foundation (integer-thinning slope $lambda > 0$, survivor-prefix property); HSM provides the **operational protocol** to test it.
+
+### Information-Theoretic Model Selection
+
+HSM's **Axiom A4 (Quality Identity)** formalizes model selection via $Q^* = argmax_Q [I(Q; O) - lambda text{MDL}(Q)]$, where $O$ ranges over admissible observers (A1–A3). This prevents "smuggling" unjustified structure into the analysis—a common pitfall when researchers choose ad-hoc basis functions or kernels to maximize apparent coupling.
+
+---
+
+## 1.4 Main Contributions
+
+**1. Complete Falsifiable Framework**
+
+- Four axioms (Vibration, Closure, Observer discipline, Quality Identity) ground all inferences in phase observables and admissible transformations;
+- Four Edge tests (E1–E4) serve as hard gates with explicit rejection criteria;
+- Three null families with BH-FDR control ensure statistical rigor;
+- One abstract operator (DCO) unifies detection, validation, and control.
+
+**2. Formal Theorems with Proofs**
+
+- **Theorem 1 (RG irrelevance):** High-order/detuned couplings decay exponentially under coarse-graining;
+- **Theorem 2 (Monotone harmony):** Greedy steering toward low-order locks increases $H^*$ monotonically within budget.
+
+Proofs rely only on the RG flow structure, Lipschitz continuity of $H^*$, and preregistered penalty functions—no hidden assumptions.
+
+**3. Platform-Agnostic Design**
+
+- No code dependencies: all operators specified as abstract mappings;
+- Clock compiler (Sec. 4.1.1) handles oscillatory, event-based, semantic, and mixed-radix sources;
+- Works for any system admitting phase extraction: neural, mechanical, quantum, social, aesthetic.
+
+**4. Version 1.1 Extensions**
+
+- Observer-swap persistence (E2, E4) for cross-platform replication;
+- Micro-nudge monotonicity requirement (E3) as automatic demotion criterion;
+- Lock-churn $\chi$ for adaptive/creative systems;
+- Semantic template locks $K_{\text{sem}}$ for narrative/ritual analysis;
+- Control Barrier Function safety guard for steering.
+
+**5. Reproducibility Infrastructure**
+
+- One-page operational checklist (Sec. 12);
+- Researcher-degrees-of-freedom ledger (Appendix D);
+- Explicit failure modes with mitigation strategies (Sec. 11);
+- Quantitative predictions for four experimental domains (neural PAC, Josephson arrays, optomechanics, biological rhythms).
+
+---
+
+## 1.5 Paper Roadmap
+
+**Section 2** establishes objects, notation, and the four foundational axioms.
+
+**Section 3** defines coherence, the harmony functional $H^*$, and introduces the locking kernel $K_{ab}(p{:}q)$.
+
+**Section 4** specifies acceptance criteria (nulls + Edge tests E1–E4).
+
+**Section 5** presents the RG flow and proves the Low-Order Wins law.
+
+**Section 6** details the four Edge tests as hard falsification gates.
+
+**Section 7** defines the Delta Coupling Operator (DCO) and DeltaScore.
+
+**Section 8** maps how the protocol enforces the law at each stage.
+
+**Section 9** states and sketches Theorems 1–2.
+
+**Section 10** specifies reproducibility discipline (preregistration, hold-out, ablations).
+
+**Section 11** enumerates limitations and failure modes.
+
+**Section 12** provides a one-page operational checklist.
+
+**Appendices** cover clock compilation (non-sinusoidal sources), modulus choice for mixed-radix systems, proofs of theorems, null construction details, and the full researcher-degrees-of-freedom ledger.
+
+---
+
+# 2. Foundational Axioms and Notation
+
+## 2.1 Objects, Notation, and Units
+
+### Phase Processes
+
+Each channel $a \in A$ is observed as a **phase process** $(\theta_a(t), \rho_a(t), \omega_a(t))$ where:
+
+- $\theta_a(t) \in \mathbb{R}$ is the **unwrapped phase** (radians);
+- $\rho_a(t) \ge 0$ is the **amplitude** (dimensionless or native units);
+- $\omega_a(t) = \dot{\theta}_a(t)$ is the **instantaneous frequency** (units: $mathrm{s}^{-1}$).
+
+### Analysis Windows
+
+For a population $A = {a_1, ldots, a_N}$, define expectations $\langle \cdot \rangle$ over a fixed analysis window $[t_0, t_0 + T]$ with duration $T$ and sampling rate $f_s$.
+
+### Dimensionless Convention
+
+**All coupling statistics are dimensionless.** Frequencies retain $\mathrm{s}^{-1}$ but enter coupling kernels only as **ratios** $omega_b/omega_a$.
+
+### Octave Bands and Identifiability
+
+**Octave band:** Frequency interval $[Omega, 2Omega)$.
+
+**Identifiability constraint:** In each band, accept at most **one** primary ratio $(p{:}q)$ per ordered pair $(a,b)$. This prevents aliasing and ensures uniqueness.
+
+### Integer Relations
+
+A relation $(p,q)$ with $p, q \in \mathbb{N}, p+q \le P$ (preregistered order bound) corresponds to the resonance condition
+
+$$
+p \omega_b \approx q \omega_a.
+$$
+
+We call $r := p + q$ the **order** of the relation.
+
+---
+
+## 2.2 Clock Compiler (Extended for v1.1)
+
+### Purpose
+
+Not all systems admit sinusoidal oscillations. HSM must handle:
+
+- **Event trains** (spikes, zero-crossings, renewal processes);
+- **Symbolic streams** (ritual cadences, narrative beats, protocol steps);
+- **Mixed-radix cycles** (calendar systems, musical pitch classes).
+
+The **clock compiler** maps any source $x(t)$ to an admissible phase $theta_x(t)$.
+
+### Compilation Rules
+
+**1. Oscillatory signals** (default)
+
+- Apply Hilbert transform: $x_{text{analytic}}(t) = x(t) + imathcal{H}[x(t)]$;
+- Extract instantaneous phase: $theta(t) = arg(x_{text{analytic}}(t))$;
+- Unwrap to ensure continuity.
+
+**2. Event trains**
+
+- Identify events $\{t_1, t_2, \ldots, t_n\}$ (e.g., spike times);
+- Construct **renewal clock**: $\theta(t) = 2\pi \frac{t - t_k}{t_{k+1} - t_k}$ for $t in [t_k, t_{k+1})$;
+- Phase resets to 0 at each event.
+
+**3. Symbolic/semantic streams**
+
+- Choose a small basis $\{T_1, \ldots, T_m\}$ of recurring templates (e.g., weekly ritual, narrative arc);
+- Define $\theta_{\text{tpl}}(t)$ as the phase in the template cycle;
+- Example: for weekly cycle, $theta(t) = 2pi cdot (text{day-of-week}(t) / 7)$.
+
+**4. Mixed-radix circular tasks**
+
+- Pick modulus $N$ aligned to the phenomenon:
+    - $N = 12$ for pitch classes (chromatic scale);
+    - $N = 7$ for weekly cycles;
+    - $N = 24$ for circadian hours.
+- Map observable $x(t) \in \{0, 1, \ldots, N-1\}$ to $theta(t) = 2pi x(t)/N$.
+
+### Admissibility Requirement
+
+All derived $\theta$ **must pass E1 (vibration legibility)** and **E2 (symmetry invariance)** or they are inadmissible. This prevents arbitrary "phase" assignments that have no operational meaning.
+
+<aside>
+📐
+
+**Design Choice:** The clock compiler ensures HSM applies to **any system with periodic or quasi-periodic structure**, not just sinusoidal oscillators. This includes: belief cycles, social rituals, work protocols, creative cadences, and even semantic templates in narrative.
+
+</aside>
+
+---
+
+## 2.3 The Four Axioms
+
+### A1 (Vibration)
+
+**Statement:** Every observable phenomenon admits a phase description $\mathcal{V}(x) = (A, f, \phi, \mathbf{H})$ where:
+
+- $A$: amplitude;
+- $f$: fundamental frequency;
+- $phi$: phase;
+- $mathbf{H}$: harmonic content.
+
+**Interpretation:** The axiom asserts that oscillatory structure is **observable**, not metaphorical. If a putative "phase" $\theta$ cannot be measured independently of the coupling analysis, it violates A1.
+
+**Operational test:** Phase extraction must survive **amplitude muting** (multiply signal by zero, recover $\theta$ from zero-crossings or prior model). Encoded in **E1**.
+
+---
+
+### A2 (Closure)
+
+**Statement:** All valid inferences are built from $\mathcal{V}$ and **admissible transformations** (filtering, coarse-graining, symmetry actions) without importing extraneous structure.
+
+**Interpretation:** You cannot "discover" structure you pre-assumed. Example violations:
+
+- Using a wavelet basis tailored to a specific $(p,q)$ before testing whether that relation exists;
+- Choosing filter cutoffs to maximize apparent coupling;
+- Applying causal filters that inject artificial directionality.
+
+**Operational test:** All preprocessing must be preregistered and **apply uniformly** to all $(p,q)$ candidates. Encoded in **E2** (symmetry invariance).
+
+---
+
+### A3 (Observer Discipline)
+
+**Statement:** Observers must preserve phase meaning under admissible transformations; otherwise claims are void.
+
+**Interpretation:** If changing measurement apparatus or platform destroys the claimed coupling, the coupling is **observer-specific** (artifact) rather than **system-intrinsic** (real).
+
+**Operational test (v1.1 extension):** **E2** and **E4** now require **observer/instrument swap** persistence. A lock that survives temporal coarse-graining but disappears when switching from EEG to MEG (at comparable SNR) fails A3.
+
+---
+
+### A4 (Quality Identity)
+
+**Statement:** Among candidate descriptions $Q$, choose
+
+$$
+Q^* = \arg\max_Q \Big[ I(Q; O) - \lambda \mathrm{MDL}(Q) \Big],
+$$
+
+where $O$ ranges over **admissible observers obeying A1–A3** and $\lambda > 0$ is preregistered.
+
+**Interpretation:** "Quality" is the **most informative description penalized by complexity**, computed over observers that don't smuggle structure. This formalizes Occam's razor: prefer the simplest model that explains the data **without** assuming the conclusion.
+
+**Operational consequence:** All choices (lock acceptance, model class, controller design) inherit this MDL discipline. The **DeltaScore** (Sec. 7) includes an MDL penalty term $-alpha_5 mathrm{MDL}$.
+
+<aside>
+💡
+
+**Why these axioms?** They rule out the most common failure modes in coupling analysis:
+
+- A1: vacuous "phase" definitions;
+- A2: circular reasoning (assuming structure then "finding" it);
+- A3: platform artifacts mistaken for real effects;
+- A4: overfitting (complex models that don't generalize).
+</aside>
+
+---
+
+# 3. Coherence, Harmony, and the Locking Kernel
+
+## 3.1 Pairwise Phase Coherence
+
+For channels $a, b$, define
+
+$$
+C_{ab} = \Big| \big\langle e^{i(\theta_a - \theta_b)} \big\rangle \Big| \in [0, 1].
+$$
+
+This is the **magnitude of the mean phase difference**, a standard measure of phase synchronization.
+
+---
+
+## 3.2 Population Order Parameter
+
+For a population $A = {a_1, ldots, a_N}$, the **Kuramoto order parameter** is
+
+$$
+R = \Big| \big\langle e^{i\theta} \big\rangle \Big| \in [0, 1],
+$$
+
+where $\langle \cdot \rangle$ averages over all channels.
+
+**Interpretation:** $R \approx 1$ indicates strong global synchrony; $R \approx 0$ indicates incoherence.
+
+**Acceptance requirement:** HSM requires $R > \texttt{accept\_R}$ (preregistered) for $\ge \texttt{min\_persist\_cycles}$ (preregistered) as a prerequisite for claiming any locks. This ensures the system exhibits **sustained coherence** before we search for specific $(p,q)$ relations.
+
+---
+
+## 3.3 Harmony Functional $H^*$
+
+Define a **preregistered weighted sum**:
+
+$$
+H^* = w_C \overline{C} + w_S S + w_T T - w_D D + w_I I,
+$$
+
+where:
+
+- $overline{C}$: mean pairwise coherence over **accepted edges** (not all pairs);
+- $S$: **stability** = fraction of the analysis window where coherence exceeds threshold and persists $\ge$ fixed cycle count;
+- $T$: **throughput** = domain-specific flow measure (e.g., effective bandwidth, task completion rate), normalized to $[0,1]$;
+- $D$: **dissonance** = phase variance or detuning spread;
+- $I$: **innovation** = emergence rate of **new** accepted locks per unit time.
+
+All weights $w_\bullet$ and thresholds are **preregistered hyperparameters**.
+
+**Interpretation:** $H^*$ quantifies system "harmony" as a balance of coherence, stability, productive flow, and creative flexibility. The **control objective** (Sec. 7, Theorem 2) is to increase $H^*$ via minimal frequency nudges.
+
+### Lock-Churn (v1.1 Addition)
+
+For adaptive systems, define
+
+$$
+\chi = \frac{\# \text{ primary lock switches}}{\text{analysis window}}.
+$$
+
+High $\chi$ indicates the system frequently switches dominant locks ("aperiodic creativity"); low $\chi$ indicates static locking. Report $\chi$ per pair/system to characterize regimes: lock $\to$ detune $\to$ re-lock cycles.
+
+---
+
+## 3.4 Locking Kernel $K_{ab}(p{:}q)$ (v1.1 Updated)
+
+For channels $a, b$ and coprime integers $p, q \ge 1$ with $p + q \le P$ (preregistered):
+
+$$
+\boxed{
+K_{ab}(p{:}q) = \underbrace{\Big| \big\langle e^{i(p\theta_b - q\theta_a)} \big\rangle \Big|}_{\text{phase lock magnitude}} \cdot e^{-\lambda(p+q)} \cdot e^{-\gamma \delta_{ab}(p{:}q)}
+}
+$$
+
+with **scale-free detuning**:
+
+$$
+\delta_{ab}(p{:}q) = \frac{\Big| \frac{\omega_b}{\omega_a} - \frac{p}{q} \Big|}{\max\!\Big( \frac{\omega_b}{\omega_a}, \frac{p}{q} \Big)}.
+$$
+
+### Components
+
+**1. Phase lock magnitude** (v1.1 change)
+
+Use the **circular magnitude** $\big| \langle e^{i(\cdot)} \rangle \big|$ rather than the signed projection $langle sin(cdot) rangle$. This makes $K \in [0,1]$ independent of phase origin.
+
+**Directional evidence:** If causality testing is needed, keep the signed projection $\langle \sin(p\theta_b - q\theta_a) \rangle$ as a **separate diagnostic** (used in E3), but do **not** mix it into the acceptance kernel.
+
+**2. Order penalty** $e^{-\lambda(p+q)}$
+
+Exponentially suppresses high-order relations. Typical value: $\lambda \approx 0.6$ (inherited from LOW[[1]](https://www.notion.so/Low-Order-Wins-A-Renormalization-Group-Principle-for-Integer-Relation-Persistence-f5577d610f8c4470a8160254a620751c?pvs=21), but HSM treats this as a **preregistered hyperparameter**, not a universal constant).
+
+**3. Detuning penalty** $e^{-\gamma \delta_{ab}(p{:}q)}$
+
+Exponentially suppresses relations with large frequency mismatch. The scale-free form $\delta_{ab} = |\omega_b/\omega_a - p/q| / \max(\omega_b/\omega_a, p/q)$ ensures dimensionless comparison. Typical value: $gamma approx 12$.
+
+### Units and Identifiability
+
+- **Units:** $K_{ab}(p{:}q)$ is dimensionless.
+- **Identifiability:** Per $(a,b)$ and octave band (or mod-$N$ band for mixed-radix), accept at most **one** primary $(p{:}q)$. If multiple candidates exceed threshold, choose the one with **largest** $K$ after null-adjusted significance.
+
+---
+
+## 3.5 Semantic/Template Locks (v1.1 Optional Layer)
+
+For systems with **message streams** $m(t)$ (text, images, protocol steps), define a **template basis** $\{T_1, \ldots, T_m\}$ of recurring patterns.
+
+**Semantic lock strength:**
+
+$$
+K_{\text{sem}}(t) = \max_{k} \text{cos\_sim}\big( \text{embed}(m(t)), \text{embed}(T_k) \big),
+$$
+
+where $\text{embed}$ is a preregistered embedding (e.g., sentence-BERT, CLIP for images, or domain-specific feature extractor).
+
+**Usage:** Apply the same acceptance gates (nulls + E1–E4) and penalties as for phase locks. Report $K_{\text{sem}}$ alongside phase locks $K$ in the DCO output.
+
+**Example:** For a weekly ritual, templates might be {Preparation, Execution, Reflection}. $K_{\text{sem}}$ measures how strongly each day's activities match the template.
+
+<aside>
+🎨
+
+**Design Rationale:** Adding $K_{\text{sem}}$ makes HSM applicable to **narrative, aesthetic, and social systems** where "phase" is metaphorical but **recurring structure** is real. The key is that templates must be **preregistered** (A2 closure) and **testable** (E1–E4 still apply via appropriate operational definitions of "amplitude mute" and "perturbation").
+
+</aside>
+
+---
+
+# 4. Null Families and Acceptance Criteria
+
+## 4.1 Three Preregistered Null Families
+
+To claim that an observed $K_{ab}(p{:}q)$ represents **real structure** rather than noise or artifact, it must beat **all three** null types simultaneously:
+
+### Null 1: Spectral Surrogates (Phase Randomization)
+
+**Construction:**
+
+1. Compute FFT of band-passed signal $x_a(t)$;
+2. Randomize phases: $widetilde{X}*a(f) = |X_a(f)| e^{iphi*{text{rand}}(f)}$, $phi_{text{rand}} sim text{Uniform}[0, 2pi)$;
+3. Inverse FFT to get $widetilde{x}_a(t)$;
+4. Re-estimate $widetilde{K}_{ab}(p{:}q)$.
+
+**What it destroys:** Cross-channel phase relationships.
+
+**What it preserves:** Amplitude spectra, autocorrelation within each channel.
+
+**Purpose:** Rules out spurious coupling from spectral overlap or waveform shape.
+
+---
+
+### Null 2: Phase-Shuffle Surrogates (Temporal Permutation)
+
+**Construction:**
+
+1. Extract phases $theta_a(t), theta_b(t)$;
+2. Circularly shift one phase by random lag $tau sim text{Uniform}[0, T)$: $widetilde{theta}_b(t) = theta_b(t + tau)$;
+3. Re-estimate $widetilde{K}_{ab}(p{:}q)$.
+
+**What it destroys:** Temporal alignment of cross-channel phases.
+
+**What it preserves:** Marginal phase distributions, within-channel dynamics.
+
+**Purpose:** Rules out coupling from slow drifts or common external driver.
+
+---
+
+### Null 3: Mechanistic Surrogates (AR/ARMA)
+
+**Construction:**
+
+1. Fit AR or ARMA model to each channel's amplitude/frequency time series;
+2. Simulate from the fitted model to generate synthetic data $widetilde{x}_a(t), widetilde{x}_b(t)$;
+3. Re-estimate $widetilde{K}_{ab}(p{:}q)$.
+
+**What it destroys:** Cross-channel coupling.
+
+**What it preserves:** Within-channel autocovariance structure.
+
+**Purpose:** Rules out coupling from autocorrelation patterns that "look like" locks.
+
+---
+
+## 4.2 Edge Condition (Statistical Rigor)
+
+A candidate lock $(a,b,p,q)$ must satisfy:
+
+$$
+K_{ab}(p{:}q) > \max\!\big\{ \tau_{\text{spec}}^{95}, \tau_{\text{shuffle}}^{95}, \tau_{\text{mech}}^{95} \big\},
+$$
+
+where $\tau_{\text{type}}^{95}$ is the 95th percentile of the null distribution for that type (500 replicates).
+
+**Multiple-test control:** Apply **Benjamini-Hochberg FDR** at $q \le 0.05$ across all $(p,q)$ candidates in the roster.
+
+<aside>
+🔬
+
+**Why three nulls?** Each null type targets a different alternative hypothesis:
+
+- Spectral: waveform harmonics or filterbank leakage;
+- Phase-shuffle: slow drift or common modulation;
+- Mechanistic: autocorrelation mimicking coupling.
+
+Beating **all three** provides much stronger evidence than a single null test.
+
+</aside>
+
+---
+
+## 4.3 Full Acceptance Criteria (All Required)
+
+A lock $(a,b,p,q)$ is **accepted** if and only if:
+
+**1. Population coherence:** $R > \texttt{accept\_R}$ for $ge texttt{min_persist_cycles}$.
+
+**2. Null threshold:** $K_{ab}(p{:}q)$ exceeds all three null thresholds (Sec. 4.2).
+
+**3. Edge tests E1–E4 pass** (Sec. 6).
+
+**Doctrine:** Failing **any** criterion **invalidates** the lock. There is **no partial credit**.
+
+---
+
+# 5. RG Flow and the Low-Order Wins Law
+
+## 5.1 The Flow Equation
+
+Under coarse-graining by scale $\ell$ (e.g., temporal decimation, spatial pooling), the coupling strength $K = K_{ab}(p{:}q)$ evolves as:
+
+$$
+\frac{dK}{d\ell} = \bigl( 2 - \Delta_{p:q} \bigr) K - \Lambda K^3 + \cdots,
+$$
+
+where the **effective scaling dimension** is
+
+$$
+\Delta_{p:q} = d + \eta(p+q) + \zeta \Big| \frac{\omega_b}{\omega_a} - \frac{p}{q} \Big|.
+$$
+
+### Parameters
+
+- $d$: **base dimensionality** of the frequency space (typically $d = 2$ for two-oscillator systems; see Appendix A of LOW[[1]](https://www.notion.so/Low-Order-Wins-A-Renormalization-Group-Principle-for-Integer-Relation-Persistence-f5577d610f8c4470a8160254a620751c?pvs=21) for the geometric derivation);
+- $eta > 0$: **order penalty coefficient** (preregistered or estimated);
+- $zeta > 0$: **detuning penalty coefficient** (preregistered or estimated);
+- $Lambda > 0$: **nonlinear damping** (bounds growth of strong couplings).
+
+---
+
+## 5.2 The Low-Order Wins Law (Operational Statement)
+
+**Corollary (RG Irrelevance of High Order / Detune):**
+
+If $p+q$ is large **or** detuning $|\omega_b/\omega_a - p/q|$ is large, then $\Delta_{p:q} > 2$ and:
+
+$$
+K^* = 0 \quad \text{(unique stable fixed point)}.
+$$
+
+Hence, **only low-order, near-tuned locks persist** under noise and coarse-graining.
+
+**Proof Sketch:**
+
+$\Delta_{p:q}$ increases monotonically in both $p+q$ and detune. For sufficiently large values, $2 - Delta_{p:q} < 0$, making the linear term negative. The cubic term $-\Lambda K^3$ stabilizes $K = 0$ as the unique attractor. See Appendix B for full proof.
+
+---
+
+## 5.3 Connection to the Locking Kernel
+
+The kernel $K_{ab}(p{:}q) = |\langle e^{i(\cdot)} \rangle| \cdot e^{-\lambda(p+q)} \cdot e^{-\gamma \delta}$ is **designed to match the RG flow**:
+
+- The order penalty $e^{-\lambda(p+q)}$ mirrors the $\eta(p+q)$ term in $Delta_{p:q}$;
+- The detuning penalty $e^{-\gamma \delta}$ mirrors the $\zeta|\omega_b/\omega_a - p/q|$ term.
+
+Thus, **empirical** $K$ **values should exhibit RG-consistent decay**—which is exactly what **Edge test E4** verifies.
+
+<aside>
+⚡
+
+**Key Insight:** The locking kernel is **not an arbitrary choice**—it is the **stationary measure** implied by the RG flow. Using a different kernel (e.g., one that doesn't penalize order) would **violate** the Low-Order Wins law and fail E4.
+
+</aside>
+
+---
+
+# 6. Edge Tests: The Four Hard Gates
+
+Every accepted lock **must pass all four Edge tests**. Failing **any** test **invalidates all downstream claims**. No partial credit.
+
+---
+
+## E1 — Channelized Vibration Proof
+
+### Test
+
+**1. Amplitude muting:** Set amplitude $\rho_a(t) = 0$ (or inject high-amplitude noise). Phase $\theta_a(t)$ must remain recoverable from:
+
+- Zero-crossings of the original signal;
+- A previously fitted phase model;
+- Independent measurement (e.g., separate sensor).
+
+**2. Time-reversal:** Reverse time $t to -t$. Undirected measures (coherence $C_{ab}$, kernel magnitude $|K|$) must be preserved; directed measures (phase lag, Granger causality) must reverse sign.
+
+### Decision Rule
+
+If either check fails, **halt pipeline** and reject all locks for that channel. The "phase" is not operationally meaningful (violates **A1 Vibration**).
+
+### Rationale
+
+This test prevents vacuous "phase" definitions where $\theta$ is just a transformed version of the raw signal with no independent existence.
+
+---
+
+## E2 — Symmetry & Observer Invariance (v1.1 Tightened)
+
+### Test
+
+**1. Phase gauge invariance:** Adding a constant $\theta_a \to \theta_a + \phi_0$ must not change $K_{ab}(p{:}q)$ (up to numerical precision).
+
+**2. Permutation invariance:** If channels are exchangeable (e.g., symmetric oscillators, identical sensors), permuting their labels must preserve the lock set.
+
+**3. Observer/instrument swap (v1.1 addition):** Repeat measurement with a different platform or sensor modality (e.g., EEG $\to$ MEG; optical $\to$ electrical; high-rate $\to$ downsampled). Accepted locks must persist with **comparable** $K$ **values** (within bootstrapped 95% CI).
+
+### Decision Rule
+
+If any symmetry is broken or observer-swap fails, **invalidate** the lock. The claimed structure is either **preprocessing artifact** (violates **A2 Closure**) or **observer-specific** (violates **A3 Observer Discipline**).
+
+### Rationale
+
+Spurious structure often breaks symmetries that the physical system respects. Example: applying a causal filter (e.g., forward-only Butterworth) injects artificial directionality, breaking time-reversal symmetry.
+
+The observer-swap requirement ensures that locks are **system-intrinsic**, not measurement-dependent.
+
+---
+
+## E3 — Micro-Perturbation Causality (v1.1 Monotonicity Required)
+
+### Test
+
+**Setup:** Choose the top-scoring lock $(a^*, b^*, p^*, q^*)$ (highest $K$ after null adjustment). Compute the detuning:
+
+$$
+\delta\omega^* = p^* \omega_{b^*} - q^* \omega_{a^*}.
+$$
+
+**Intervention:** Apply small, **budgeted** frequency nudges $\{\delta\omega_a\}$ with $\sum_a |\delta\omega_a| \le \epsilon$ (preregistered budget, e.g., $epsilon = 0.01 cdot overline{omega}$) in the direction that **reduces** $|deltaomega^*|$.
+
+**Prediction:** The perturbation should:
+
+1. **Increase** $K_{a^* b^*}(p^*{:}q^*)$ (stronger lock);
+2. **Increase** harmony $H^*$ (better system-wide coherence);
+3. **Decrease** $|\delta\omega^*|$ (closer to exact resonance).
+
+**Control:** Simultaneously test **placebo nudges** (random directions, same $\epsilon$ budget) and **null controllers** (no intervention). The aligned nudge must outperform both.
+
+**v1.1 Monotonicity requirement:** The improvement must be **monotone**: if tiny aligned nudges ($epsilon/10$) produce **smaller** gains than expected by linear extrapolation, or if gains **reverse sign** at $epsilon/2$, **demote the claim** (likely spurious or unstable lock).
+
+### Decision Rule
+
+If the prediction fails for **any** of the three outcomes, or if monotonicity fails, **reject** the lock. The claimed $(p^*, q^*)$ does **not** reflect a real dynamical attractor (violates the RG flow's implied causal structure).
+
+### Rationale
+
+This is the **strongest** test. It moves beyond passive observation to **active manipulation**. If nudging the system toward a hypothesized lock **doesn't** strengthen it, the lock was either:
+
+- A statistical fluctuation;
+- Misidentified $(p,q)$;
+- Genuine but **not causal** (e.g., both channels driven by a hidden third variable).
+
+**E3 is what elevates HSM from "correlation detection" to "mechanistic validation."**
+
+---
+
+## E4 — Out-of-Sample & Cross-Modality RG Persistence (v1.1 Extended)
+
+### Test
+
+**1. Temporal hold-out:** Split data into training (first 70%) and test (last 30%). Estimate $K_{ab}(p{:}q)$ on training, verify $K_{ab}^{\text{test}} \ge \tau'$ (slightly relaxed threshold to account for finite-sample variance).
+
+**2. Coarse-graining:** Apply the RG operator (temporal pooling, spectral binning, downsampling by factor 2). High-order candidates ($p+q > P^ *= 2/eta$, predicted irrelevant by Sec. 5.2) must decay; low-order candidates must persist**.
+
+**3. Cross-modality RG (v1.1 addition):** Transform the data to a coarser representation (e.g., high-frame-rate video $\to$ gaze-tracked rhythms; EEG $\to$ envelope-only). Accepted locks must survive this lossy compression.
+
+### Decision Rule
+
+If **any** of the following occur, **reject** the lock:
+
+- Test-set $K < \tau'$ (overfitting);
+- High-order lock persists under coarse-graining (violates LOW);
+- Low-order lock vanishes under coarse-graining (violates LOW);
+- Cross-modality compression destroys the lock (observer-specific, violates **A3**).
+
+### Rationale
+
+E4 enforces three requirements:
+
+- **Generalization** (temporal hold-out);
+- **RG consistency** (coarse-graining decay pattern);
+- **Modality independence** (survives information loss).
+
+Together, these ensure that locks are **robust, scale-invariant, and physically real**.
+
+---
+
+## Summary of Edge Tests
+
+| **Test** | **What It Checks** | **Failure Means** |
+| --- | --- | --- |
+| **E1** | Phase operationality | Vacuous "phase" (violates A1) |
+| **E2** | Symmetry + observer invariance | Artifact or observer-dependent (violates A2/A3) |
+| **E3** | Micro-perturbation causality + monotonicity | Non-causal or spurious lock |
+| **E4** | Out-of-sample + RG + cross-modality | Overfitting or RG-inconsistent |
+
+<aside>
+⚠️
+
+**Hard-Gate Doctrine:** Passing nulls (Sec. 4) is **necessary** but **not sufficient**. E1–E4 are **logical prerequisites** for any causal or mechanistic claim. Partial success (e.g., passing E1–E3 but failing E4) yields **no publishable claim**.
+
+</aside>
+
+---
+
+# 7. The Delta Coupling Operator (DCO)
+
+## 7.1 Abstract Definition
+
+Let $\mathcal{P} = \{(\theta_a, \rho_a, \omega_a)\}_{a \in A}$ be the observed phases on an analysis window.
+
+With preregistered hyperparameters $(P, lambda, gamma, texttt{accept_R}, texttt{min_persist_cycles}, text{null families}, w_bullet)$, define the **Delta Coupling Operator**:
+
+$$
+\mathrm{DCO}: \mathcal{P} \mapsto \bigl( \mathcal{L}, G^{\text{primary}}, \mathsf{RG}, \Delta H^*, \Pi, \mathrm{DeltaScore}, \text{ObserverSwap}, \chi \bigr).
+$$
+
+### Output Components
+
+**1. Locks** $\mathcal{L}$
+
+A list of accepted tuples:
+
+$$
+[(a, b), (p{:}q), K, \text{detune}, C_{ab}, \text{persistence}],
+$$
+
+ranked by $K$ and null-adjusted significance.
+
+**2. Primary Graph** $G^{\text{primary}}$
+
+Edges $(a,b)$ annotated with accepted ratio $(p{:}q)$.
+
+**Direction:** Edges are **undirected by default**. Direction is added **only if**:
+
+- **E3** confirms directed causality (nudging $a$ affects $b$ more than vice versa), **or**
+- Exogenous directionality is known (e.g., driver-response experimental setup).
+
+Otherwise, report as undirected (coherence without implied causation).
+
+**3. RG Summary** $\mathsf{RG}$
+
+Flags indicating:
+
+- **Low-order persistence:** Do $p+q \le P/2$ candidates survive coarse-graining?
+- **High-order decay:** Do $p+q > P/2$ candidates decay under coarse-graining?
+- **Consistency score:** $in [0,1]$, quantifying agreement with predicted RG flow (Sec. 5.2).
+
+**4. Harmony Gain** $\Delta H^*$
+
+Measured improvement when enacting the **best steer plan** (below) vs. null controllers:
+
+$$
+\Delta H^* = H^*(\omega + \delta\omega^*) - H^*(\omega).
+$$
+
+Compare to:
+
+- Random nudges (same budget $epsilon$, random directions);
+- No intervention (baseline).
+
+**5. Steer Plan** $\Pi$
+
+Minimal-budget frequency adjustments $\{\delta\omega_a\}$ with $\sum_a |\delta\omega_a| \le \epsilon$ that:
+
+- Reduce detuning $|\delta\omega^*|$ for the top-ranked lock;
+- Increase harmony $H^*$ (predicted via linearization, validated in E3).
+
+**Safety constraint (v1.1 addition):** Only enact $\Pi$ if a **Control Barrier Function** (CBF) holds:
+
+$$
+\mathbb{E}[ h(x_{t+1}) - h(x_t) \mid \Pi ] \ge -\alpha h(x_t),
+$$
+
+where $h$ is a preregistered safety metric (domain-specific, e.g., amplitude bounds, stability margin). If violated, project $\Pi$ to the nearest safe steer or abstain.
+
+**6. DeltaScore**
+
+A preregistered composite:
+
+$$
+\mathrm{DeltaScore} = \sigma\!\Big( \alpha_1 \max|K| + \alpha_2 \Delta H^* + \alpha_3 \mathbb{1}\{\text{RG low-persist}\} + \alpha_4 \mathrm{OOS\text{-}R^2} - \alpha_5 \mathrm{MDL} \Big),
+$$
+
+where:
+
+- $\sigma$ is the logistic function (squashes to $[0,1]$);
+- $\alpha_\bullet$ are preregistered weights;
+- $\mathrm{OOS\text{-}R^2}$ is out-of-sample explained variance (E4 test set);
+- $\mathrm{MDL}$ is the description length (number of accepted locks $\times$ log complexity).
+
+**Interpretation:** DeltaScore aggregates: lock strength, harmony improvement, RG consistency, generalization, and parsimony. Higher is better. Typical acceptance: DeltaScore $ge 0.7$.
+
+**7. ObserverSwap (v1.1 addition)**
+
+Pass/fail flags and $\Delta K$ values under instrument/platform/modality swaps (E2 requirement). Reported as:
+
+$$
+\text{ObserverSwap} = \{ (\text{swap type}, \text{pass/fail}, \Delta K, \text{CI}) \}.
+$$
+
+**8. Lock-Churn** $\chi$ (v1.1 addition)
+
+Rate of primary lock switches per pair/system (Sec. 3.3). Reported as:
+
+$$
+\chi = \frac{\# \text{ switches}}{\text{analysis window duration}}.
+$$
+
+---
+
+## 7.2 Recommended Preregistration (Typical Starting Point)
+
+$$
+\begin{aligned}
+P &= 6, \\
+\lambda &= 0.6, \\
+\gamma &= 12.0, \\
+\texttt{accept\_R} &= 0.5, \\
+\texttt{min\_persist\_cycles} &= 8, \\
+q_{\text{FDR}} &\le 0.05, \\
+\epsilon_{\text{steer}} &= 0.01 \cdot \overline{\omega}.
+\end{aligned}
+$$
+
+**Rationale:**
+
+- $P = 6$: Restricts to orders $\le 6$ (captures $2{:}1, 3{:}2, 4{:}3, 5{:}4, 3{:}3, ldots$);
+- $lambda = 0.6$: Matches LOW thinning slope (but treat as tunable);
+- $gamma = 12$: Strong detuning penalty (relaxable if system has wide locking bandwidth);
+- $texttt{accept_R} = 0.5$: Moderate global coherence required;
+- $texttt{min_persist_cycles} = 8$: Ensures sustained locking (not transient).
+
+**Sensitivity:** Report results for $P \in \{4, 6, 8\}$ and $\lambda \in \{0.4, 0.6, 0.8\}$ in ablations (Sec. 10).
+
+---
+
+# 8. How the Protocol Enforces the Law
+
+HSM is **not** a passive analysis framework—it is a **disciplined protocol** that **enforces** the Low-Order Wins law at every stage.
+
+---
+
+## 8.1 Feature Extraction → Locking
+
+**Enforcement:**
+
+- Enumerate **only** small $(p,q)$ with $p+q \le P$ (preregistered);
+- Penalize order via $e^{-\lambda(p+q)}$ in the kernel;
+- Penalize detune via $e^{-\gamma \delta_{ab}(p{:}q)}$ in the kernel;
+- Accept **only after** clearing all nulls **and** passing E1–E4.
+
+**Result:** Lower-order is a **tested hypothesis**, not a stylistic choice. If high-order locks persist under E4, the LOW law is **falsified** for that system.
+
+---
+
+## 8.2 Causality
+
+**Enforcement:**
+
+- Graph edges are **undirected by default**;
+- Direction admitted **only if** compatible with accepted $(p,q)$ **and** confirmed by E3 micro-perturbations.
+
+**Result:** Causal claims require **intervention**, not just correlation.
+
+---
+
+## 8.3 Steering (Control)
+
+**Enforcement:**
+
+- Perturbations are **toward** exact low-order locks (reducing $|deltaomega^*|$);
+- Success measured by $+\Delta H^*$ vs. null controllers;
+- Safety barrier (CBF) prevents harmful interventions.
+
+**Result:** Control is **mechanistically grounded** (leverages LOW structure) and **safe** (respects preregistered constraints).
+
+---
+
+## 8.4 RG Coarse-Graining
+
+**Enforcement:**
+
+- **E4** requires high-$p+q$ candidates to **decay** under pooling;
+- Consistency score quantifies agreement with predicted flow (Sec. 5.2).
+
+**Result:** RG relevance is **verified empirically**, not assumed.
+
+---
+
+## 8.5 Truth Ladder
+
+Persistence under:
+
+1. **Symmetry** (E2) $\to$ rules out preprocessing artifacts;
+2. **RG coarse-graining** (E4) $\to$ rules out fine-scale noise;
+3. **Cross-domain integer stability** (same $(p,q)$ in neural PAC, Josephson arrays, optomechanics) $\to$ suggests **universal organizing principle**.
+
+This elevates a finding from "statistical fit" to **law-status**.
+
+---
+
+# 9. Two Compact Theorems
+
+## Theorem 1 (RG Irrelevance of High Order / Detune)
+
+**Statement:**
+
+In the dynamics with locking potential $V_{\text{lock}}$ encoded by the kernel (Sec. 3.4) and RG flow
+
+$$
+\frac{dK}{d\ell} = (2 - \Delta_{p:q}) K - \Lambda K^3 + \cdots,
+$$
+
+there exist $P^*$ and $\delta^* > 0$ such that:
+
+If $p+q > P^*$ **or** $Big| frac{omega_b}{omega_a} - frac{p}{q} Big| > delta^*$, then* $\Delta_{p:q} > 2$ *and the unique stable fixed point is $K^* = 0$.
+
+Hence, **only low-order, near-tuned locks persist** under noise and coarse-graining.
+
+**Proof Sketch:**
+
+$\Delta_{p:q} = d + \eta(p+q) + \zeta |\omega_b/\omega_a - p/q|$ increases monotonically in both $p+q$ and detune.
+
+For sufficiently large values:
+
+$$
+2 - \Delta_{p:q} < 0 \quad \Rightarrow \quad \frac{dK}{d\ell} = (\text{negative}) \cdot K - \Lambda K^3.
+$$
+
+The linear term drives $K to 0$; the cubic term stabilizes zero as the unique attractor.
+
+Full proof in **Appendix B**.
+
+---
+
+## Theorem 2 (Monotone Harmony Under Greedy Steering)
+
+**Statement:**
+
+Given:
+
+- Small intervention budget $sum_a |deltaomega_a| le epsilon$;
+- Twice-differentiable $H^*$ with local Lipschitz gradient;
+- Top-scoring lock $(a^*, b^*, p^*, q^*)$ with detuning $deltaomega^*$,
+
+the **greedy steer plan** that moves $\omega$ in the direction of the lock (closest detune, largest null-adjusted $K$) satisfies:
+
+$$
+H^*(\omega + \delta\omega^*) - H^*(\omega) > 0
+$$
+
+for sufficiently small $\epsilon > 0$ (within the Lipschitz radius).
+
+I.e., **harmony increases monotonically** until detune hits zero or budget saturates.
+
+**Proof Sketch:**
+
+Linearize $H^*$ in $omega$:
+
+$$
+H^*(\omega + \delta\omega) \approx H^*(\omega) + \nabla_\omega H^* \cdot \delta\omega.
+$$
+
+The greedy steer chooses $\delta\omega^*$ to maximize $\nabla_\omega H^* \cdot \delta\omega$ subject to $|deltaomega| le epsilon$.
+
+By construction of $H^*$ (Sec. 3.3), the gradient $\nabla_\omega H^*$ points toward reduced detuning and increased coherence.
+
+Lipschitzness bounds curvature, ensuring first-order ascent dominates within budget.
+
+Full proof in **Appendix B**.
+
+---
+
+# 10. Reproducibility Discipline (Non-Negotiable)
+
+HSM requires **five reproducibility pillars**:
+
+---
+
+## 10.1 Preregistration
+
+**Before viewing main results**, register:
+
+- Hyperparameters: $P, lambda, gamma, texttt{accept_R}, texttt{min_persist_cycles}, w_bullet$;
+- Null families: spectral, phase-shuffle, mechanistic;
+- FDR level: $q le 0.05$;
+- Intervention budgets: $epsilon_{text{steer}}$;
+- Safety constraints: CBF definition.
+
+**Format:** Timestamped configuration file (YAML/JSON) with SHA256 hash.
+
+---
+
+## 10.2 Hold-Out Validation
+
+**Temporal OOS (E4 requirement):**
+
+- Split data 70/30 (train/test);
+- Estimate locks on train;
+- Verify $K^{\text{test}} \ge \tau'$ on test.
+
+**Cross-validation (optional):** 5-fold CV for parameter tuning (detuning penalty $gamma$, Harmony weights $w_bullet$).
+
+---
+
+## 10.3 Ablations
+
+Remove components and record $\Delta$ in DeltaScore:
+
+- **Drop coherence term** ($w_C = 0$ in $H^*$);
+- **Drop stability term** ($w_S = 0$);
+- **Drop each null family** (run with only 2 of 3 nulls);
+- **Relax Edge tests** (skip E3 or E4).
+
+**Report:** If DeltaScore remains $\ge 0.7$ after any ablation, that component is **redundant**. If DeltaScore drops below 0.5, the component is **critical**.
+
+---
+
+## 10.4 Robustness
+
+**Octave-band sweep:**
+
+- Repeat analysis for $Omega in {Omega_0/2, Omega_0, 2Omega_0}$;
+- Verify same $(p,q)$ locks accepted.
+
+**Identifiability:** Enforce "at most one primary $(p,q)$ per band per pair."
+
+---
+
+## 10.5 Reporting
+
+Emit a compact **Δ-report** (JSON + PDF) containing:
+
+- Accepted locks $\mathcal{L}$ with $(a,b,p,q,K,text{detune})$;
+- Null margins (how far $K$ exceeds each null threshold);
+- RG flags (low-order persist? high-order decay?);
+- Steer actions $\Pi$ with predicted vs. actual $Delta H^*$;
+- DeltaScore and its components;
+- ObserverSwap results;
+- Lock-churn $chi$.
+
+**Public archive:** Deposit at long-term DOI (Zenodo, OSF) upon acceptance.
+
+---
+
+# 11. Limitations and Failure Modes
+
+HSM is **deliberately falsifiable**. Failure modes are **features, not bugs**—they tell us when the method does not apply.
+
+---
+
+## 11.1 Nonstationarity
+
+**Problem:** Rapid drift in $\omega$ can mimic detuning or create spurious high-order locks.
+
+**Mitigation:**
+
+- Use shorter analysis windows ($T downarrow$);
+- Adaptive frequency tracking (e.g., sliding-window STFT);
+- Block-wise stationarity test (Appendix K of LOW[[1]](https://www.notion.so/Low-Order-Wins-A-Renormalization-Group-Principle-for-Integer-Relation-Persistence-f5577d610f8c4470a8160254a620751c?pvs=21)).
+
+**Failure signature:** E4 temporal hold-out fails (train/test $K$ values uncorrelated).
+
+---
+
+## 11.2 Aliasing / Sampling
+
+**Problem:** Insufficient sampling rate $f_s$ folds high-frequency content into low frequencies, creating false integer ratios.
+
+**Mitigation:**
+
+- Verify Nyquist: $f_s ge 2 cdot (p omega_b)_{max}$;
+- Anti-aliasing filter before downsampling;
+- Aliasing audit (Appendix G of LOW[[1]](https://www.notion.so/Low-Order-Wins-A-Renormalization-Group-Principle-for-Integer-Relation-Persistence-f5577d610f8c4470a8160254a620751c?pvs=21)).
+
+**Failure signature:** E2 symmetry breaks under platform swap (high-$f_s$ vs. low-$f_s$ platforms yield different $(p,q)$).
+
+---
+
+## 11.3 Octave Confusion
+
+**Problem:** Harmonics shadow primaries (e.g., $4{:}2$ vs. $2{:}1$).
+
+**Mitigation:**
+
+- Identifiability constraint (one primary per octave band per pair);
+- Prefer smallest coprime $(p,q)$ if multiple candidates;
+- Banded analysis (report locks per frequency band).
+
+**Failure signature:** Multiple $(p,q)$ accepted in same band (violates identifiability).
+
+---
+
+## 11.4 Short Records
+
+**Problem:** Too few cycles inflate false positives (noise masquerades as locks).
+
+**Mitigation:**
+
+- Enforce $\texttt{min\_persist\_cycles} \ge 8$ (preregistered);
+- Require $T \ge 10 \cdot (2\pi / \omega_{\min})$ (at least 10 periods of slowest oscillation).
+
+**Failure signature:** E4 out-of-sample fails (locks don't replicate on test set).
+
+---
+
+## 11.5 Symmetry Breaks from Preprocessing
+
+**Problem:** Unregistered preprocessing (e.g., forward-only causal filters, asymmetric windowing) injects directionality or breaks gauge invariance.
+
+**Mitigation:**
+
+- Use zero-phase filters (e.g., `filtfilt` in MATLAB/Python);
+- Preregister all preprocessing;
+- E2 guards this by testing symmetry explicitly.
+
+**Failure signature:** E2 time-reversal check fails (undirected measure changes sign).
+
+---
+
+# 12. One-Page Operational Checklist (TL;DR)
+
+<aside>
+📋
+
+**The HSM Protocol in Seven Steps**
+
+**1. Register** hyperparameters $(P, lambda, gamma, texttt{accept_R}, texttt{min_persist_cycles}, w_bullet)$, null families, FDR level, steer budget $epsilon$.
+
+**2. Compute** phases $theta_a(t)$, amplitudes $rho_a(t)$, frequencies $\omega_a(t)$ via clock compiler (Sec. 2.2). Screen population coherence $R$.
+
+**3. Enumerate** $(p,q)$ up to $P$. Score each with locking kernel $K_{ab}(p{:}q)$ (Sec. 3.4).
+
+**4. Gate** by nulls (Sec. 4.2) + E1–E4 (Sec. 6). Enforce identifiability (one primary per band per pair). Apply BH-FDR at $q le 0.05$.
+
+**5. Assemble** locks $mathcal{L}$, primary graph $G^{text{primary}}$, RG summary $mathsf{RG}$. Quantify harmony gain $Delta H^*$.
+
+**6. Steer** by minimal $\delta\omega$ toward best low-order lock (Sec. 7, $Pi$). Check CBF safety. Re-measure $K$ and $H^*$.
+
+**7. Report** Δ-report with DeltaScore (Sec. 7.1). **Stop immediately** if any Edge test fails—no partial credit, no post-hoc rescue.
+
+</aside>
+
+---
+
+# 13. Conclusion
+
+The **Harmonic Scientific Method** provides a complete, falsifiable framework for low-order phase coupling detection and control. By grounding all inferences in four foundational axioms (Vibration, Closure, Observer discipline, Quality Identity), requiring passage of four hard Edge tests (E1–E4), and enforcing the Low-Order Wins RG principle via explicit penalties in the locking kernel, HSM transforms coupling analysis from a post-hoc pattern-search into a **disciplined scientific protocol**.
+
+Version 1.1 extends the method to non-sinusoidal sources (event trains, semantic templates, mixed-radix cycles), strengthens falsification via observer-swap persistence and micro-nudge monotonicity, and adds lock-churn metrics for adaptive systems. Two compact theorems (RG irrelevance of high-order/detuned locks; monotone harmony under greedy steering) provide formal guarantees, with full proofs in Appendix B.
+
+HSM is **platform-agnostic** (no code dependencies, only abstract operators), **pre-registered** (all hyperparameters fixed before viewing results), and **reproducible** (one-command capsule with timestamped configuration). Failure modes are **explicit** (nonstationarity, aliasing, octave confusion, short records, symmetry breaks) with clear mitigation strategies.
+
+The method elevates findings from "statistical fit" to **law-status** via persistence under symmetry, RG coarse-graining, and cross-domain integer stability—offering a rigorous path forward for oscillatory systems in neuroscience, nonlinear dynamics, quantum mechanics, and beyond.
+
+---
+
+# Appendix A: Proof of the Clock Compiler's Validity
+
+## A.1 Event-Train Renewal Clock
+
+**Claim:** For point-process data ${t_1, t_2, ldots}$, the renewal clock $\theta(t) = 2\pi (t - t_k)/(t_{k+1} - t_k)$ for $t \in [t_k, t_{k+1})$ satisfies **A1 (Vibration)**.
+
+**Proof:**
+
+1. **Phase survives amplitude mute:** Events $\{t_k\}$ are binary (spike/no-spike), independent of amplitude. Muting amplitude (setting spike heights to zero) does not destroy event times. Phase is recoverable from $\{t_k\}$ alone.
+2. **Time-reversal:** Under $t to -t$, event sequence reverses: ${t_1, t_2, ldots} to {-t_n, ldots, -t_2, -t_1}$. Undirected measures (ISI distribution, phase coherence magnitude) are preserved; directed measures (spike-triggered average) reverse sign.
+3. **Frequency:** Instantaneous frequency $\omega(t) = \dot{\theta}(t) = 2\pi/(t_{k+1} - t_k)$ is well-defined (inverse of inter-event interval).
+
+Hence, $(\theta, \omega)$ from renewal clock is admissible. $\square$
+
+---
+
+## A.2 Semantic Template Clock
+
+**Claim:** For symbolic stream $m(t)$ with template basis ${T_k}$, defining $\theta_{\text{tpl}}(t)$ as the phase in the best-matching template cycle satisfies **A1** if templates are preregistered and operationally defined.
+
+**Proof:**
+
+1. **Phase survives amplitude mute:** Templates are defined on **semantic content** (text, images, actions), not amplitude. "Muting amplitude" corresponds to e.g., stripping formatting but retaining words. If template matching survives this transformation (E1 test), phase is operational.
+2. **Time-reversal:** Semantic streams often lack natural time-reversal symmetry (narratives have directionality). HSM allows this: if the system is **known** to be directed, E1 time-reversal is relaxed. Otherwise, undirected template phases (e.g., daily cycles) must satisfy E1.
+3. **Frequency:** "Instantaneous frequency" is the rate of template cycling (e.g., templates/day for weekly ritual).
+
+Hence, preregistered semantic clocks are admissible. $\square$
+
+---
+
+# Appendix B: Proofs of Theorems 1–2
+
+## B.1 Theorem 1 (RG Irrelevance)
+
+**Restatement:**
+
+Under RG flow $frac{dK}{dell} = (2 - Delta_{p:q}) K - Lambda K^3$, with $Delta_{p:q} = d + eta(p+q) + zeta |omega_b/omega_a - p/q|$, there exist $P^*$ and $\delta^* > 0$ such that if $p+q > P^*$ or $|omega_b/omega_a - p/q| > delta^*$, then $K^* = 0$ is the unique stable fixed point.
+
+**Proof:**
+
+Fixed points satisfy:
+
+$$
+(2 - \Delta_{p:q}) K^* - \Lambda (K^*)^3 = 0.
+$$
+
+Solutions: $K^* = 0$ or $K^* = \pm \sqrt{(2 - \Delta_{p:q})/\Lambda}$ (latter requires $Delta_{p:q} < 2$).
+
+**Case 1:** $Delta_{p:q} > 2$.
+
+Then $(2 - Delta_{p:q}) < 0$, and the only real fixed point is $K^* = 0$.
+
+Stability: For small perturbation $K = epsilon$,
+
+$$
+\frac{dK}{d\ell} = (2 - \Delta_{p:q}) \epsilon - \Lambda \epsilon^3 \approx (\text{negative}) \cdot \epsilon \quad \Rightarrow \quad K \to 0.
+$$
+
+Hence $K^* = 0$ is **stable**.
+
+**Case 2:** $Delta_{p:q} < 2$.
+
+Non-zero fixed points exist: $K^* = pm sqrt{(2 - Delta_{p:q})/Lambda}$.
+
+Stability: Linearize around $K^* > 0$:
+
+$$
+\frac{d(K - K^*)}{d\ell} \approx -(2 - \Delta_{p:q}) (K - K^*) \quad \Rightarrow \quad \text{stable}.
+$$
+
+Zero is **unstable** in this regime.
+
+**Critical order** $P^*$ **and detune $delta^*$:**
+
+Since $\Delta_{p:q} = d + \eta(p+q) + \zeta |\omega_b/\omega_a - p/q|$ increases monotonically in both $p+q$ and detune, choose:
+
+$$
+P^* := \frac{2 - d}{\eta}, \quad \delta^* := \frac{2 - d - \eta P}{\zeta}.
+$$
+
+For $p+q > P^*$ or detune $> \delta^*$

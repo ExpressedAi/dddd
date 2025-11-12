@@ -1,0 +1,1502 @@
+# 0. Front Matter
+
+### Title
+
+**Cross-Ontological Phase Locking and N-Lock Emergence: A Universal Framework for Multi-Layer Coherence**
+
+### Running Title
+
+*Cross-Ontological Phase Locking*
+
+### Authors & Affiliations
+
+**Jake A. Hallett** (corresponding)
+
+[affiliation]
+
+[email]
+
+[Co-authors if any]
+
+---
+
+### Abstract
+
+We present a formal framework for **Cross-Ontological Phase Locking (COPL)** and **emergent N-way locks**—coherent integer-frequency relations among oscillatory components drawn from distinct **structure classes** or **ontological layers** (e.g., cells↔filaments↔organelles in biology; cortical rhythms↔subcortical rhythms↔peripheral rhythms in neuroscience; optical↔mechanical↔electronic modes in hybrid quantum systems). Building on the Low-Order Wins RG principle, we prove that: (i) coupling strength $K_{\mathbf{p}}$ for an $`N`$-component lock with integer vector $\mathbf{p} \in \mathbb{Z}^N$ obeys RG flow $`\frac{dK}{dt} = [(k-1) - \Delta_{\mathbf{p}} - AK]K`$, where $k$ is the number of **independent ontological layers** (tested via phase-rank audit) and $\Delta_{\mathbf{p}} = \alpha_0 + \alpha_1 r + \alpha_2(N-1) + \alpha_{\text{XO}} c(\mathbf{p})$ includes penalties for order $`r = \|\mathbf{p}\|_1`$, support size $`N = \|\mathbf{p}\|_0`$, and cross-ontological mixing; (ii) **emergent N-locks** ($`N \ge 3`$) exist where composite $K_{\mathbf{p}} \gg \tau$ while all pairwise marginals $K_{(i,j)} < \tau$ (searched up to $`r_{\text{max}}^{\text{pair}}`$) in identical windows—such locks are **pairwise-invisible** yet RG-persistent and survive latent-clock residualization; (iii) survivor sets in $(r, N)$ space form **down-sets** (order ideals); the induced cut $(r^\star(t), N^\star(t))$ is unique under strict monotonicity of $`\Delta`$.
+
+We specify **twelve falsification gates** (CO-1 through CO-12): N-emergence detection (raw + residualized), latent-clock null, order-thinning slope (geometry-matched + dual $g$ robustness), support-thinning slope, down-set + Farey stability, $`k`$-criticality shift (independent layer + sham control), cross-ontology penalty sign test, brittleness ladder, permutation discipline (circular-block + multiverse), desync collapse, RG-time placebo, rank consistency, residual survival, and harmonic robustness. The framework is **domain-agnostic**: applicable to any system admitting multi-layer phase extraction—biological (subcellular↔cellular↔tissue), neural (local↔regional↔network), quantum (photonic↔phononic↔electronic), geophysical (atmospheric↔oceanic↔seismic), social (individual↔group↔institutional), and aesthetic (rhythm↔melody↔harmony). We provide synthetic generators (including adversarial red-team capsules: latent-pacer, hidden-pairwise-leakage, harmonic-ghost, nonstationary-drift), quantitative predictions ($`\lambda_r > 0`$, $`\lambda_N > 0`$, bandwidth shrinkage $b_{r,N} \propto (r + \rho(N-1))^{-1/2}$ with estimated $`\rho`$), explicit measurement protocols (synchronized windows, composite rosters, kernel residualization, jittered-window controls), and a complete reproducibility capsule.
+
+The method extends LOW's integer-thinning law from **within-layer** to **cross-layer** coordination, offering the first falsifiable account of how complex systems organize coherence across ontological boundaries. All claims are testable via preregistered $(r, N)$ rosters with pilot/holdout splits, BH-FDR at $q \le 0.05$ (dual-universe: detection + emergence), automatic block-length selection, and hard rejection if any gate fails.
+
+---
+
+### Keywords
+
+Cross-ontological coupling; emergent N-locks; multi-layer coherence; renormalization group; falsifiability; pairwise-invisible structure; hetero-dimensional phase locking
+
+### MSC / PACS Classifications
+
+**MSC:** 37M10 (Dynamical systems approximation), 37A25 (Ergodicity), 82C31 (Stochastic methods), 92C20 (Neural biology), 81V80 (Quantum optics)
+
+### Data and Code Availability
+
+All protocols, synthetic generators, and analysis pipelines are provided in platform-agnostic pseudocode. Reference implementations deposited at long-term DOI upon acceptance.
+
+### Conflict of Interest
+
+The authors declare no competing interests.
+
+---
+
+# 1. Introduction
+
+## 1.1 Motivation: The Hidden Architecture of Multi-Layer Systems
+
+Complex systems across disciplines exhibit **hierarchical organization**: biological systems structure themselves as molecules→organelles→cells→tissues; neural systems as neurons→columns→areas→networks; quantum systems as photons→phonons→electrons; social systems as individuals→groups→institutions. Within each layer, oscillatory dynamics have been extensively studied—cellular calcium oscillations, cortical rhythms, phononic modes, institutional cycles.
+
+Yet a fundamental question remains **empirically unresolved**: Do these layers coordinate via **direct cross-layer phase locks**, or merely through indirect cascades? And critically: Can **higher-order locks** ($N ge 3$ components) emerge that are **invisible to pairwise analysis**—detectable only when the correct $N$-tuple is examined?
+
+Standard approaches fail on both counts:
+
+**1. Layer-mixing ambiguity.** Conventional phase-coupling methods (coherence, phase-locking value, transfer entropy) compute statistics on pre-chosen pairs without systematic cross-layer enumeration or falsification criteria for "is this lock real or just correlated noise?"
+
+**2. Pairwise myopia.** Virtually all coupling analyses restrict to **pairwise** relations. If a system exhibits strong triadic coupling (e.g., $phi_A - phi_B + phi_C approx text{const}$) with weak or zero pairwise locks ($A notleftrightarrow B$, $A notleftrightarrow C$, $B notleftrightarrow C$), standard methods report "no significant coupling" despite the system being tightly coordinated.
+
+**3. No RG consistency requirement.** Cross-layer locks, if real, should exhibit the same Low-Order Wins signatures as within-layer locks: exponential thinning with order $r$, survival under coarse-graining, brittleness hierarchy. Existing methods do not test these predictions.
+
+The **COPL/N-Lock framework** addresses all three pathologies by:
+
+- **Systematic cross-layer enumeration** with integer vector $\mathbf{p} \in \mathbb{Z}^m$ spanning all active ontological layers;
+- **Explicit N-emergence test** comparing composite $K_{\mathbf{p}}$ to all pairwise marginals in identical windows;
+- **RG flow with critical dimension** $k-1$ where $k$ = number of independent layers, yielding testable decay patterns;
+- **Seven hard falsification gates** (CO-1 through CO-7) with pre-registered thresholds and no partial credit.
+
+---
+
+## 1.2 Core Claims and Testable Signatures
+
+### Claim 1: Cross-Ontological Locks Exist and Obey LOW
+
+**Statement:** For systems with $k \ge 2$ independent ontological layers (e.g., cells + filaments; theta + gamma; photons + phonons), there exist integer vectors $\mathbf{p}$ with support spanning multiple layers such that:
+
+$$
+K_{\mathbf{p}} = \Big\| \big\langle e^{i(\mathbf{p} \cdot \boldsymbol{\phi})} \big\rangle \Big\| \gg 0
+$$
+
+after detuning normalization, and these locks exhibit:
+
+- **Thinning in order** $r = |mathbf{p}|*1$: $mathbb{E}[Z*{mathbf{p}}] approx beta_0 - lambda_r r$ with $lambda_r > 0$;
+- **Cross-layer penalty**: At fixed $r$, locks mixing ontologies have smaller $K$ or larger effective $\Delta_{\mathbf{p}}$ (quantified by $alpha_{text{XO}} > 0$);
+- **RG persistence**: Low-order cross-layer locks survive temporal/spatial pooling; high-order locks decay (E4 from HSM).
+
+**Falsification hook (CO-5, CO-4):** If cross-layer $K$ values are systematically inflated by estimator leakage, or if adding/removing layers fails to shift critical dimension from $2 to k-1$, reject the framework.
+
+---
+
+### Claim 2: Emergent N-Locks Are Pairwise-Invisible Yet RG-Stable
+
+**Statement:** For $N ge 3$, there exist systems where:
+
+$$
+K_{\mathbf{p}} > \tau \quad \text{(passes FDR)}
+$$
+
+for a composite lock $\mathbf{p}$ with support size $N$, yet **all** pairwise locks $(i,j) \subset \text{supp}(\mathbf{p})$ satisfy:
+
+$$
+K_{(i,j)} < \tau \quad \text{(fails FDR)}
+$$
+
+in the **same analysis windows** with the **same** detuning penalty $g$ and **same** null families.
+
+Define the **emergence score**:
+
+$$
+\mathcal{E}_{\mathbf{p}} := Z_{\mathbf{p}} - \max_{(i,j) \subset \text{supp}(\mathbf{p})} Z_{(i,j)}.
+$$
+
+**Prediction:** $\mathcal{E}_{\mathbf{p}} > 0$ and $\mathcal{E}_{\mathbf{p}}$ increases (or remains stable) under RG coarse-graining $mathcal{R}$.
+
+**Falsification hook (CO-1):** If no dataset exhibits $\mathcal{E} > 0$ after controlling for pairwise contamination (residual test), or if emergent locks vanish under mild coarse-graining, reject N-emergence claim.
+
+---
+
+### Claim 3: Joint Thinning in $(r, N)$ with Down-Set Survivors
+
+**Statement:** Normalized log-strengths $Z_{\mathbf{p}}$ decay **jointly** in order $r$ and support size $N$:
+
+$$
+\mathbb{E}[Z_{\mathbf{p}}] \approx \beta_0 - \lambda_r r - \lambda_N (N-1),
+$$
+
+with $\lambda_r \ge t \alpha_1 > 0$ and $lambda_N ge t alpha_2 > 0$.
+
+At fixed threshold $tau$, the survivor set forms a **down-set** (order ideal):
+
+$$
+\mathcal{S}(t) = \{\mathbf{p}: K_{\mathbf{p}}(t) \ge \tau\} = \{(r, N): r \le r^\star(t), N \le N^\star(t)\}.
+$$
+
+**Falsification hook (CO-2, CO-3):** If WLS slope $widehat{lambda}_N le 0$, or if survivor set exhibits "holes" (e.g., $N=2$ locks absent but $N=3$ locks present at same $r$), reject joint-thinning claim.
+
+---
+
+## 1.3 Relationship to Prior Work
+
+### Low-Order Wins (Within-Layer Foundation)
+
+LOW[Low-Order Wins: A Renormalization-Group Principle for Integer-Relation Persistence](https://www.notion.so/Low-Order-Wins-A-Renormalization-Group-Principle-for-Integer-Relation-Persistence-f5577d610f8c4470a8160254a620751c?pvs=21) proves that within a single ontological layer (e.g., pairs of neurons, pairs of oscillators), coupling strength decays exponentially with integer-relation order: $K_r propto e^{-lambda r}$. COPL **extends** this to:
+
+- **Across layers**: $\mathbf{p}$ can mix different structure types;
+- **Higher arities**: $N \ge 3$ with emergent-lock detection;
+- **Joint geometry**: decay in both $r$ and $N$ with down-set survivor structure.
+
+Crucially, COPL **inherits** LOW's RG machinery (flow equation, detuning normalization, brittleness ladder) while generalizing the critical dimension from $2 to k-1$.
+
+---
+
+### Multi-Way Interactions (Computational Neuroscience)
+
+Recent work on **higher-order interactions** in spiking networks (Battiston et al. 2020, Giusti et al. 2016) uses topological data analysis and simplicial complexes to detect $N$-way statistical dependencies. However:
+
+- No connection to phase dynamics or integer frequency ratios;
+- No RG flow prediction or falsification criteria;
+- Typically restricted to within-layer (all neurons) rather than cross-layer (neurons↔glia↔vasculature).
+
+COPL provides the **phase-locking analog**: where TDA detects static $N$-way correlations, COPL detects **dynamic $N$-way phase locks** with explicit integer coefficients and RG consistency.
+
+---
+
+### Cross-Frequency Coupling (Neuroscience PAC)
+
+Phase-amplitude coupling (Canolty & Knight 2010, Tort et al. 2010) studies how the **phase** of a slow rhythm (e.g., theta) modulates the **amplitude** of a fast rhythm (e.g., gamma). This is a **within-layer** (all cortical) pairwise phenomenon.
+
+COPL generalizes to:
+
+- **Cross-layer**: theta (cortical) locked to delta (thalamic) locked to respiration (brainstem);
+- **Phase-phase** (not phase-amplitude): all components contribute phases to a single integer relation;
+- **N-way emergent**: triadic theta-beta-gamma locks invisible pairwise.
+
+PAC methods (modulation index, MVL) become **special cases** of COPL when restricted to $N=2$ and same-layer analysis.
+
+---
+
+### Quantum Many-Body Entanglement
+
+In quantum optics and solid-state physics, **multi-partite entanglement** (GHZ states, W states) exhibits genuine $N$-way correlations not reducible to pairwise entanglement. Entanglement witnesses (Gühne & Tóth 2009) test for this.
+
+COPL is the **classical-oscillator analog**: emergent N-locks are "phase-entangled" in the sense that the composite phase defect $\Theta_{\mathbf{p}} = \mathbf{p} \cdot \boldsymbol{\phi}$ is tightly confined while marginal defects are not. The RG flow $\frac{dK}{dt} = [(k-1) - \Delta_{\mathbf{p}}]K$ plays an analogous role to entanglement decay under decoherence.
+
+---
+
+## 1.4 Domain Scope: Universal Applicability
+
+While motivating examples often reference **biology** (subcellular organelles, cells, tissues), the COPL framework is **domain-agnostic**. Any system admitting:
+
+1. **Multi-layer structure** (distinct ontological types with extractable phases);
+2. **Phase observability** (passes HSM Axiom A1: amplitude-mute survival, time-reversal symmetry);
+3. **Coarse-graining operator** (temporal pooling, spatial averaging, parameter binning)
+
+can be analyzed via COPL. Domains include:
+
+**Neuroscience:** cortical↔subcortical↔peripheral rhythms; LFP↔spike trains↔behavior.
+
+**Biology:** organelles↔cells↔tissues; gene regulatory networks (mRNA↔protein↔metabolite oscillations); circadian clocks (SCN↔liver↔muscle).
+
+**Quantum/photonic:** photons↔phonons↔electrons in optomechanical systems; excitons↔plasmons↔magnons in condensed matter.
+
+**Geophysical:** atmospheric↔oceanic↔seismic oscillations; solar cycles↔terrestrial climate↔geological rhythms.
+
+**Social:** individual routines↔group schedules↔institutional calendars; market micro-structure↔sectoral cycles↔macro policy.
+
+**Aesthetic/music:** rhythm (percussion)↔melody (tonal)↔harmony (chordal); compositional layers in polyphonic music.
+
+**Engineering:** multi-physics simulations (thermal↔mechanical↔electrical); cyber-physical systems (sensors↔controllers↔actuators).
+
+The **only requirement** is that each layer admits a well-defined instantaneous phase $\phi_X(t)$ satisfying HSM's operational tests (E1: vibration legibility, E2: symmetry invariance).
+
+<aside>
+🌍
+
+**Design Philosophy:** COPL is built as a **universal measurement framework**, not a domain-specific model. The RG flow $\frac{dK}{dt} = [(k-1) - \Delta_{\mathbf{p}} - AK]K$ applies to **any** system with $k$ independent phase processes, regardless of the physical substrate. This is analogous to how thermodynamics applies to gases, solids, and black holes—the mathematical structure is substrate-independent.
+
+</aside>
+
+---
+
+## 1.5 Main Contributions
+
+**1. Formal multi-layer RG framework**
+
+- Flow equation with critical dimension $k-1$ (Sec. 5);
+- Joint dimension ansatz $\Delta_{\mathbf{p}} = \alpha_0 + \alpha_1 r + \alpha_2(N-1) + \alpha_{\text{XO}} c(\mathbf{p})$ (Sec. 4);
+- Three core theorems (Theorem A: joint thinning; Theorem B: down-set survivors; Proposition C: emergent-lock exclusivity) with proofs (Sec. 6, Appendix B).
+
+**2. Emergent N-lock detection**
+
+- Operational definition via $\mathcal{E}_{\mathbf{p}} = Z_{\mathbf{p}} - \max_{\text{pairs}} Z_{(i,j)} > 0$ (Sec. 3.3);
+- Permutation test for statistical significance (Sec. 7.7);
+- Pairwise-residual control to rule out contamination (Sec. 8.1);
+- RG stability requirement: $\mathcal{E}$ persists or grows under $\mathcal{R}$ (Theorem C).
+
+**3. Seven hard falsification gates (CO-1 through CO-7)**
+
+- Each gate has explicit pass/fail criterion with pre-registered thresholds;
+- Failing any gate invalidates downstream claims (no partial credit);
+- Gates cover: N-emergence, support-thinning, joint-prefix, $k$-criticality, pairwise-shadow nulls, adversarial brittleness, causal cascades (Sec. 9).
+
+**4. Domain-agnostic measurement protocols**
+
+- Synchronized windowing across all layers (Sec. 7.2);
+- Composite roster design (primitive $\mathbf{p}$ with balanced cross-layer coverage, Sec. 7.1);
+- Same detuning penalty $g$ and null families as LOW/HSM (Sec. 7.4);
+- Flow parameter identification: recover $(\alpha_0, \alpha_1, \alpha_2, \alpha_{\text{XO}}, A)$ from early-$t$ differencing (Sec. 7.3).
+
+**5. Quantitative predictions and synthetic generators**
+
+- $P1$: Cross-layer penalty $\alpha_{\text{XO}} > 0$ (testable via CO-5);
+- $P2$: Emergent triadic locks exist in planted models (Sec. 10.1);
+- $P3$: Bandwidth shrinks as $b_{r,N} \propto (rN)^{-3/2}$ (Corollary 6.3);
+- $P4$: RG fingerprint $(\alpha_1, \alpha_2, \alpha_{\text{XO}})$ clusters by system class (testable meta-analysis, Sec. 10.2).
+
+**6. Reproducibility infrastructure**
+
+- Pre-registration template for $(r, N)$ rosters, thresholds, null families (Sec. 11.1);
+- Block bootstrap with automatic block-length selection (Sec. 11.2);
+- One-page operational checklist (Sec. 12);
+- Researcher degrees-of-freedom ledger (Appendix D).
+
+---
+
+## 1.6 Paper Roadmap
+
+**Section 2** establishes objects, notation, and the multi-layer phase-process model.
+
+**Section 3** defines the $N$-lock estimator $K_{mathbf{p}}$, detuning normalization, and emergence score $mathcal{E}_{mathbf{p}}$.
+
+**Section 4** introduces the coherence tensor $\mathcal{K}(t)$ and derived slices (order $Z_r$, support $Z^{(N)}$, cross-class matrix).
+
+**Section 5** presents the hetero-dimensional RG flow with critical dimension $k-1$ and dimension ansatz.
+
+**Section 6** states and proves three core theorems (joint thinning, down-set survivors, emergent exclusivity).
+
+**Section 7** details measurement protocols: roster design, estimation pipeline, flow identification, adversarial tests.
+
+**Section 8** specifies identifiability controls: pairwise-residual test, leakage audit, morphology-controlled nulls.
+
+**Section 9** defines the seven falsification gates (CO-1 through CO-7) with explicit pass/fail criteria.
+
+**Section 10** provides synthetic generators and quantitative predictions.
+
+**Section 11** outlines reproducibility discipline (pre-registration, hold-out, ablations).
+
+**Section 12** gives a one-page operational checklist.
+
+**Appendices** cover geometric derivations (critical dimension $k-1$), proofs of theorems, permutation test details, and domain instantiations (biology, neuro, quantum, geophysical, social, aesthetic).
+
+---
+
+# 2. Objects, Notation, and Multi-Layer Phase Processes
+
+## 2.1 Ontological Layers
+
+### Definition
+
+An **ontology** $\mathcal{O}$ is a finite set of **structure types** or **organizational layers**:
+
+$$
+\mathcal{O} = \{X_1, X_2, \ldots, X_k\},
+$$
+
+where each $X_i$ represents a distinct level of organization, physical substrate, or measurement modality.
+
+**Examples:**
+
+- **Biology:** $\mathcal{O} = \{\text{organelles, cells, tissues, organs}\}$
+- **Neuroscience:** $\mathcal{O} = \{\text{LFP, spikes, BOLD, behavior}\}$
+- **Quantum:** $\mathcal{O} = \{\text{photons, phonons, electrons}\}$
+- **Geophysics:** $\mathcal{O} = \{\text{atmosphere, ocean, crust}\}$
+- **Social:** $\mathcal{O} = \{\text{individual, group, institution}\}$
+- **Music:** $\mathcal{O} = \{\text{rhythm, melody, harmony}\}$
+
+### Operational Requirement
+
+Each ontology $X \in \mathcal{O}$ must admit at least one **phase process**:
+
+$$
+\phi_X(t) \in \mathbb{R}, \quad \omega_X(t) = \dot{\phi}_X(t) \in \mathbb{R},
+$$
+
+where:
+
+- $\phi_X(t)$ is the **unwrapped instantaneous phase** (radians);
+- $\omega_X(t)$ is the **instantaneous frequency** (radians/sec or Hz).
+
+Phase extraction must satisfy **HSM Axiom A1 (Vibration)**:
+
+1. **Amplitude-mute survival:** $\phi_X(t)$ recoverable from zero-crossings, prior model, or independent sensor;
+2. **Time-reversal:** Under $t to -t$, undirected measures (coherence magnitude) preserved; directed measures (lag) reverse sign.
+
+If a putative "layer" fails these tests, it is **inadmissible** (not a valid ontological component for COPL analysis).
+
+---
+
+## 2.2 Phase Vector and Integer Coefficients
+
+### Multi-Layer Phase Stack
+
+For a system with $k$ active ontologies, define the **phase vector**:
+
+$$
+\boldsymbol{\phi}(t) = \begin{pmatrix} \phi_{X_1}(t) \\ \vdots \\ \phi_{X_k}(t) \end{pmatrix} \in \mathbb{R}^k.
+$$
+
+Similarly, the **frequency vector**:
+
+$$
+\boldsymbol{\omega}(t) = \begin{pmatrix} \omega_{X_1}(t) \\ \vdots \\ \omega_{X_k}(t) \end{pmatrix} \in \mathbb{R}^k.
+$$
+
+### Integer Coefficient Vector
+
+A **candidate lock** is specified by an integer vector:
+
+$$
+\mathbf{p} \in \mathbb{Z}^k \setminus \{\mathbf{0}\},
+$$
+
+with:
+
+- **Order:** $r := \|\mathbf{p}\|_1 = \sum_{i=1}^k |p_i|$ (total integer complexity);
+- **Support size:** $N := \|\mathbf{p}\|_0 = |\{i : p_i \neq 0\}|$ (number of active layers);
+- **Primitive:** Reduce by $\gcd(p_1, \ldots, p_k)$ to avoid redundancy.
+
+**Interpretation:** The lock $\mathbf{p}$ asserts that the **phase defect**
+
+$$
+\Theta_{\mathbf{p}}(t) := \mathbf{p} \cdot \boldsymbol{\phi}(t) = \sum_{i=1}^k p_i \phi_{X_i}(t)
+$$
+
+is approximately constant (modulo $2pi$).
+
+**Cross-ontological flag:**
+
+$$
+c(\mathbf{p}) := \begin{cases}
+1 & \text{if } \text{supp}(\mathbf{p}) \text{ spans } \ge 2 \text{ distinct ontologies}, \\
+0 & \text{if all components from same ontology}.
+\end{cases}
+$$
+
+---
+
+## 2.3 Detuning and Normalization
+
+### Window-Level Detuning
+
+For analysis window $w$ with duration $T_w$, estimate instantaneous frequencies:
+
+$$
+\widehat{\omega}_{X_i} = \text{median}_{t \in I_w} \dot{\phi}_{X_i}(t).
+$$
+
+The **raw detuning** for lock $\mathbf{p}$ is:
+
+$$
+\Delta\omega_{\mathbf{p}} := \mathbf{p} \cdot \widehat{\boldsymbol{\omega}} = \sum_{i=1}^k p_i \widehat{\omega}_{X_i}.
+$$
+
+### Dimensionless Detuning
+
+To make detuning comparable across different $(\mathbf{p}, \boldsymbol{\omega})$ combinations, normalize by expected variance:
+
+$$
+\delta\omega_{\mathbf{p}} := \frac{|\Delta\omega_{\mathbf{p}}|}{\sqrt{\sum_{i=1}^k p_i^2 \text{Var}(\omega_{X_i})}},
+$$
+
+where $\text{Var}(\omega_{X_i})$ is estimated from within-window fluctuations or across-window variance.
+
+**Perfect lock:** $deltaomega_{mathbf{p}} = 0$.
+
+**Badly detuned:** $deltaomega_{mathbf{p}} gg 1$.
+
+---
+
+## 2.4 Analysis Windows and Synchronization
+
+### Synchronized Windowing Requirement
+
+**Critical:** All ontologies $X_1, \ldots, X_k$ are analyzed using **identical time windows**:
+
+$$
+I_w = [t_w, t_w + T_w], \quad w = 1, \ldots, W.
+$$
+
+This ensures that:
+
+1. **Composite locks** are tested on the **same temporal context** as **pairwise locks**;
+2. Emergence score $\mathcal{E}_{\mathbf{p}}$ is not biased by window mismatch;
+3. RG coarse-graining $\mathcal{R}$ acts uniformly across all layers.
+
+**Violation:** Using different window lengths or offsets for different layers invalidates CO-1 (N-emergence gate) and introduces spurious cross-layer structure.
+
+---
+
+## 2.5 Coarse-Graining Operator $\mathcal{R}$
+
+### Definition
+
+A fixed operator $\mathcal{R}$ that acts on observables across all layers:
+
+$$
+\mathcal{R}: (\boldsymbol{\phi}^{(0)}, \boldsymbol{\omega}^{(0)}) \mapsto (\boldsymbol{\phi}^{(1)}, \boldsymbol{\omega}^{(1)}),
+$$
+
+where superscript $(t)$ denotes RG "time" (number of coarse-graining steps).
+
+**Typical instantiations:**
+
+- **Temporal pooling:** Average phases/frequencies over consecutive windows (stride $s$, block length $L$);
+- **Spatial pooling:** Aggregate over nearby sensors/voxels/cells;
+- **Spectral binning:** Merge adjacent frequency bands before re-estimating $K_{mathbf{p}}$.
+
+### Properties (Required)
+
+**R1 (Contractivity):** $\mathbb{E}[\|\mathcal{R} \boldsymbol{\phi} - \mathcal{R} \boldsymbol{\psi}\|] \le \kappa \|\boldsymbol{\phi} - \boldsymbol{\psi}\|$ with $kappa in (0, 1]$.
+
+**R2 (Detectability):** If $K_{\mathbf{p}} \ge \tau$ before $mathcal{R}$, then $K_{\mathbf{p}} \circ \mathcal{R} \ge \tau'$ with known lower bound $tau' > 0$.
+
+**R3 (Uniformity):** $\mathcal{R}$ applies **identically** to all layers (no layer-specific pooling parameters unless pre-registered and justified).
+
+**Interpretation of RG time $t$:**
+
+$$
+t = 0, 1, 2, \ldots \quad \Leftrightarrow \quad \text{apply } \mathcal{R} \text{ zero, once, twice, } \ldots
+$$
+
+---
+
+# 3. The $N$-Lock Estimator and Emergence Score
+
+## 3.1 Phase-Coherence Estimator $K_{\mathbf{p}}$
+
+### Core Metric
+
+For integer vector $\mathbf{p} \in \mathbb{Z}^k$ and analysis window $w$, define:
+
+$$
+\boxed{
+\widehat{K}_{\mathbf{p}}(w) = \left\| \frac{1}{|I_w|} \sum_{t \in I_w} \exp\!\Big( i \big[ \Theta_{\mathbf{p}}(t) - \Delta\omega_{\mathbf{p}} \cdot t \big] \Big) \right\| \in [0, 1]
+}
+$$
+
+where:
+
+- $\Theta_{\mathbf{p}}(t) = \mathbf{p} \cdot \boldsymbol{\phi}(t)$ is the **phase defect**;
+- $\Delta\omega_{\mathbf{p}} = \mathbf{p} \cdot \widehat{\boldsymbol{\omega}}$ is the **detuning**;
+- Demodulation by $e^{-i \Delta\omega_{\mathbf{p}} t}$ centers the statistic at zero detuning.
+
+**Units:** Dimensionless, $in [0, 1]$.
+
+**Interpretation:** $K_{\mathbf{p}}$ measures how **phase-locked** the composite defect $\Theta_{\mathbf{p}}$ is over the window. $K_{\mathbf{p}} \approx 1$ indicates tight locking; $K_{\mathbf{p}} \approx 0$ indicates incoherence.
+
+### Optional Amplitude Weighting
+
+If each layer has measurable amplitude $A_{X_i}(t)$, weight by:
+
+$$
+\widehat{K}_{\mathbf{p}}^{\text{weighted}} = \left\| \frac{\sum_{t} \sqrt{\prod_{i} A_{X_i}(t)^{|p_i|}} \exp(i[\cdots])}{\sum_{t} \sqrt{\prod_{i} A_{X_i}(t)^{|p_i|}}} \right\|.
+$$
+
+This upweights times when all components are strong. Default (unweighted) is simpler and often sufficient.
+
+---
+
+## 3.2 Detuning-Normalized Log-Strength $Z_{\mathbf{p}}$
+
+### Normalization
+
+Define:
+
+$$
+Z_{\mathbf{p}} := \log \widehat{K}_{\mathbf{p}} - g(\delta\omega_{\mathbf{p}}),
+$$
+
+where $g: \mathbb{R}_{\ge 0} \to \mathbb{R}$ is a **preregistered penalty function** satisfying:
+
+- **Even:** $g(x) = g(-x)$ (if using signed detuning);
+- **Convex:** $g'' ge 0$;
+- **Zero at origin:** $g(0) = g'(0) = 0$, $g''(0) > 0$.
+
+**Typical choices (from LOW/HSM):**
+
+**1. Quadratic-saturating:**
+
+$$
+g(\delta\omega) = \frac{\gamma \delta\omega^2}{2(1 + \eta \delta\omega^2)},
+$$
+
+with $\gamma, \eta > 0$ tuned by cross-validation.
+
+**2. Huber-quadratic:**
+
+$$
+g(\delta\omega) = \begin{cases}
+\frac{\gamma}{2} \delta\omega^2, & |\delta\omega| \le \kappa, \\
+\gamma \kappa (|\delta\omega| - \kappa/2), & |\delta\omega| > \kappa.
+\end{cases}
+$$
+
+**Why normalize?** Raw $\log K_{\mathbf{p}}$ conflates lock strength with detuning proximity. Subtracting $g$ isolates the **intrinsic coupling strength** after accounting for how "on-resonance" the system is.
+
+---
+
+## 3.3 Emergence Score $\mathcal{E}_{\mathbf{p}}$ (Pairwise-Invisible Test)
+
+### Definition
+
+For a composite lock $\mathbf{p}$ with support size $N ge 3$, define:
+
+$$
+\boxed{
+\mathcal{E}_{\mathbf{p}} := Z_{\mathbf{p}} - \max_{(i,j) \subset \text{supp}(\mathbf{p})} \; \max_{\substack{\mathbf{q} \in \mathbb{Z}^k \\ \text{supp}(\mathbf{q}) = \{i,j\} \\ \|\mathbf{q}\|_1 \le r}} Z_{\mathbf{q}}
+}
+$$
+
+**Interpretation:**
+
+- $mathcal{E}_{mathbf{p}} > 0$: The **composite** lock $\mathbf{p}$ is **stronger** (after detuning normalization) than **any** pairwise lock among its components, even allowing pairwise locks up to the same order $r = |mathbf{p}|_1$.
+- $mathcal{E}_{mathbf{p}} le 0$: The composite lock is **explained by** (or weaker than) its best pairwise marginal.
+
+**Operational criterion for emergent N-lock:**
+
+1. $\mathcal{E}_{\mathbf{p}} > 0$ (composite exceeds all pairs);
+2. $Z_{\mathbf{p}} > \tau$ (composite passes FDR threshold);
+3. All pairwise $Z_{(i,j)} < \tau$ in the **same windows** (pairs fail FDR);
+4. $\mathcal{E}_{\mathbf{p}}$ persists or grows under RG coarse-graining $\mathcal{R}$ (RG stability, tested in CO-1).
+
+<aside>
+🔍
+
+**Why this is nontrivial:** In random-phase models or noise, $\mathcal{E}$ should be $\le 0$ (composite $K$ is geometric mean of pairwise $K$'s, hence weaker). Observing $\mathcal{E} > 0$ indicates **genuine higher-order structure** not reducible to pairs.
+
+</aside>
+
+---
+
+## 3.4 Brittleness Index $\mathcal{B}_{\mathbf{p}}$
+
+### Definition
+
+The **detuning brittleness** measures sensitivity of $\log K_{\mathbf{p}}$ to small frequency perturbations:
+
+$$
+\mathcal{B}_{\mathbf{p}} := \left| \frac{\partial}{\partial \delta\omega_{\mathbf{p}}} \log K_{\mathbf{p}} \right|_{\delta\omega_{\mathbf{p}} = 0}.
+$$
+
+**Operational:** Perform micro-sweeps of detuning around zero (nudge one or more $\omega_{X_i}$ by $pm epsilon$), re-estimate $K_{mathbf{p}}$, fit quadratic, extract curvature.
+
+**Prediction (from LOW, extended to N-locks):** $\mathcal{B}_{\mathbf{p}}$ is **non-decreasing** in:
+
+1. **Order** $r = |mathbf{p}|_1$;
+2. **Support size** $N = |mathbf{p}|_0$.
+
+I.e., high-order and high-$N$ locks are **more fragile** under detuning (captured by CO-6 gate).
+
+---
+
+# 4. Coherence Tensor and Derived Slices
+
+## 4.1 The Cross-Ontological Coherence Tensor $\mathcal{K}(t)$
+
+### Tensor Structure
+
+Define a **three-index tensor**:
+
+$$
+\mathcal{K}(t) = \big\{ K_{\mathbf{p}}(t) : \mathbf{p} \in \mathcal{P}_{\text{roster}} \big\},
+$$
+
+where $\mathcal{P}_{\text{roster}}$ is the **preregistered set** of candidate integer vectors.
+
+**Indices:**
+
+- **Order** $r = |mathbf{p}|*1 in [r*{min}, r_{max}]$;
+- **Support size** $N = \|\mathbf{p}\|_0 \in [2, N_{\max}]$ (typically $N_{max} in {3, 4}$);
+- **Specific vector** $\mathbf{p}$ (enumerated combinatorially).
+
+**RG evolution:** $\mathcal{K}(t) \mapsto \mathcal{K}(t+1)$ via $mathcal{R}$.
+
+---
+
+## 4.2 Order Slice $Z_r(t)$
+
+### Definition
+
+Pool all locks of order $r$ (across all $N$ and all $\mathbf{p}$ with $|mathbf{p}|_1 = r$):
+
+$$
+Z_r(t) := \text{pool}_{\|\mathbf{p}\|_1 = r} Z_{\mathbf{p}}(t),
+$$
+
+using **median in log-space** (same as LOW).
+
+**Purpose:** Test **LOW's linear thinning law** in the cross-ontological setting:
+
+$$
+\mathbb{E}[Z_r(t)] \approx \beta_0(t) - \lambda_r(t) \cdot r, \quad \lambda_r(t) > 0.
+$$
+
+Estimate $\lambda_r$ via WLS of $Z_r$ vs $r$ with heteroskedastic-robust SEs.
+
+---
+
+## 4.3 Support Slice $Z^{(N)}(t)$
+
+### Definition
+
+Pool all locks of support size $N$ (across all $r$ and all $\mathbf{p}$ with $|mathbf{p}|_0 = N$):
+
+$$
+Z^{(N)}(t) := \text{pool}_{\|\mathbf{p}\|_0 = N} Z_{\mathbf{p}}(t).
+$$
+
+**Purpose:** Test the **support-thinning law**:
+
+$$
+\mathbb{E}[Z^{(N)}(t)] \approx \gamma_0(t) - \lambda_N(t) \cdot (N - 1), \quad \lambda_N(t) > 0.
+$$
+
+**Interpretation:** Higher-arity locks ($N = 3, 4, ldots$) are **harder to maintain** than pairwise locks ($N = 2$), due to increased effective dimension $Delta_{mathbf{p}}$.
+
+**Falsification (CO-2):** If $widehat{lambda}_N le 0$, reject support-thinning claim.
+
+---
+
+## 4.4 Cross-Class Matrix $C_{XY}$
+
+### Definition
+
+For pairs of ontologies $(X, Y) in mathcal{O} times mathcal{O}$, define:
+
+$$
+C_{XY} := \max_{\substack{\mathbf{p} : \text{supp}(\mathbf{p}) \subseteq \{X, Y\}}} Z_{\mathbf{p}}.
+$$
+
+**Interpretation:** $C_{XY}$ is the **best pairwise lock** between layers $X$ and $Y$, maximized over all integer vectors restricted to those two layers.
+
+**Visualization:** Plot $C$ as a heatmap with ontologies on rows/columns. Off-diagonal entries reveal **cross-layer coupling strength**; diagonal entries (if allowing $X = Y$) show within-layer structure.
+
+**Use case:** Quick diagnostic of which layer pairs have strong coordination. Then enumerate composite $N \ge 3$ locks involving those pairs to search for emergence.
+
+---
+
+# 5. RG Flow and the Hetero-Dimensional Scaling Law
+
+## 5.1 The Flow Equation
+
+### Statement
+
+For a system with $k$ **independent** ontological layers and an $N$-lock $mathbf{p}$, the coupling strength evolves under RG coarse-graining as:
+
+$$
+\boxed{
+\frac{d K_{\mathbf{p}}}{dt} = \Big[ (k - 1) - \Delta_{\mathbf{p}} - A K_{\mathbf{p}} \Big] K_{\mathbf{p}}, \quad A > 0
+}
+$$
+
+where:
+
+- $t$ is RG "time" (number of $\mathcal{R}$ applications);
+- $k$ is the **number of independent layers** (e.g., $k = 3$ for cells + filaments + mitochondria);
+- $\Delta_{\mathbf{p}}$ is the **effective scaling dimension** of lock $mathbf{p}$;
+- $A$ is the **nonlinear damping coefficient** (universal across all $\mathbf{p}$ in a given system, but may vary across system classes).
+
+### Critical Dimension: Why $k - 1$?
+
+**Geometric argument (from LOW Appendix A, extended):**
+
+For $k$ independent phase processes $(phi_1, ldots, phi_k) in mathbb{R}^k$, a single integer constraint
+
+$$
+\mathbf{p} \cdot \boldsymbol{\phi} = 0
+$$
+
+defines a **codimension-1 hyperplane** in frequency space $mathbb{R}^k$.
+
+Under coarse-graining by scale $\ell$ (isotropic contraction), neighborhoods shrink as:
+
+- **Volume** (full space): $sim ell^{-k}$;
+- **Hyperplane slice** (codim-1): $sim ell^{-(k-1)}$.
+
+The **marginal exponent** (difference) is $k - (k-1) = 1$, but the **RG flow competes** against the volume collapse. The relevant term in the flow is the **slice scaling** $(k-1)$, which sets the critical dimension.
+
+See **Appendix A** for full derivation with references to Wilson RG and KAM theory.
+
+<aside>
+📐
+
+**Generalization:** For $m$ **independent** integer constraints among $k$ phases (codimension $m$), the flow becomes:
+
+$$
+\frac{dK}{dt} = \big[ (k - m) - \Delta - AK \big] K.
+$$
+
+In COPL, we typically have $m = 1$ (single composite lock $mathbf{p}$), so critical dimension is $k - 1$.
+
+</aside>
+
+---
+
+## 5.2 Dimension Ansatz (Joint in $r, N$, Cross-Ontology)
+
+### Parametrization
+
+Model the effective dimension as:
+
+$$
+\boxed{
+\Delta_{\mathbf{p}} = \alpha_0 + \alpha_1 r + \alpha_2 (N - 1) + \alpha_{\text{XO}} \cdot c(\mathbf{p}) + h(\mathbf{p}) + \varepsilon_{\mathbf{p}}
+}
+$$
+
+where:
+
+- $r = \|\mathbf{p}\|_1$ is the **order**;
+- $N = \|\mathbf{p}\|_0$ is the **support size**;
+- $c(\mathbf{p}) \in \{0, 1\}$ is the **cross-ontological flag** (1 if $\mathbf{p}$ mixes $\ge 2$ layers, 0 otherwise);
+- $h(\mathbf{p})$ captures **geometry** (e.g., spatial separation of layers, network distance, topological features);
+- $\varepsilon_{\mathbf{p}}$ is **bounded noise** with $|varepsilon_{mathbf{p}}| le sigma_{varepsilon}$.
+
+### Coefficient Interpretation
+
+$\alpha_0$ **(base):** Baseline dimension (typically $\alpha_0 \approx 0$ for normalized systems).
+
+$\alpha_1$ **(order penalty):** Same as LOW—higher-order integer relations are **harder to maintain**. Expect $alpha_1 > 0$.
+
+$\alpha_2$ **(support penalty):** Coordinating $N$ components is harder than coordinating $N-1$ components (more degrees of freedom to align). Expect $alpha_2 > 0$.
+
+$\alpha_{\text{XO}}$ **(cross-ontological penalty):** Mixing layers may incur additional cost due to:
+
+- **Spatial separation** (e.g., mitochondria in one cell, nucleus in another);
+- **Time-scale mismatch** (fast organelle dynamics vs slow tissue rhythms);
+- **Mechanism diversity** (different physical substrates).
+
+Sign of $alpha_{text{XO}}$:
+
+- $alpha_{text{XO}} > 0$: Cross-layer locks are **harder** (larger $Delta$, faster decay);
+- $alpha_{text{XO}} < 0$: Cross-layer locks are **easier** (could occur if cross-layer coupling is mechanistically favored);
+- $alpha_{text{XO}} = 0$: No intrinsic cross-layer penalty.
+
+**Pre-registration:** Fix the **sign assumption** per domain before analysis. If data contradicts (e.g., $\widehat{\alpha}_{\text{XO}} < 0$ when $\alpha_{\text{XO}} > 0$ was expected), report as **falsification of domain model** (not COPL framework).
+
+---
+
+## 5.3 Linear Regime and Logistic Envelope
+
+### Small-$K$ Approximation
+
+When $A K_{\mathbf{p}} \ll 1$ (early RG time or weak locks), the flow linearizes:
+
+$$
+\frac{d K_{\mathbf{p}}}{dt} \approx \big[ (k-1) - \Delta_{\mathbf{p}} \big] K_{\mathbf{p}}.
+$$
+
+Solution:
+
+$$
+\log K_{\mathbf{p}}(t) = \log K_{\mathbf{p}}(0) + \big[ (k-1) - \Delta_{\mathbf{p}} \big] t + O(A K t).
+$$
+
+**Interpretation:**
+
+- If $(k-1) - \Delta_{\mathbf{p}} > 0$ ("relevant"), $K_{\mathbf{p}}$ **grows** exponentially;
+- If $(k-1) - \Delta_{\mathbf{p}} < 0$ ("irrelevant"), $K_{\mathbf{p}}$ **decays** exponentially;
+- Threshold: $Delta_{mathbf{p}} = k - 1$.
+
+### Logistic Saturation
+
+For larger $K$, the cubic term $-A K^2$ stabilizes growth. Fixed points:
+
+$$
+K_{\mathbf{p}}^* = 0 \quad \text{or} \quad K_{\mathbf{p}}^* = \frac{(k-1) - \Delta_{\mathbf{p}}}{A} \quad (\text{if } \Delta_{\mathbf{p}} < k-1).
+$$
+
+**Carrying capacity:** $(k-1 - \Delta_{\mathbf{p}})/A$ is the **maximum sustainable strength** for lock $mathbf{p}$.
+
+---
+
+## 5.4 Predicted Thinning Laws
+
+### Order Thinning (P1)
+
+For fixed $N$, varying $r$:
+
+$$
+\mathbb{E}[Z_{\mathbf{p}}(t)] \approx \beta_0(t) - \lambda_r(t) \cdot r, \quad \lambda_r(t) \ge t \alpha_1 > 0.
+$$
+
+### Support Thinning (P2)
+
+For fixed $r$, varying $N$:
+
+$$
+\mathbb{E}[Z^{(N)}(t)] \approx \gamma_0(t) - \lambda_N(t) \cdot (N - 1), \quad \lambda_N(t) \ge t \alpha_2 > 0.
+$$
+
+### Joint Thinning (Theorem A)
+
+Combining both:
+
+$$
+\mathbb{E}[Z_{\mathbf{p}}(t)] = \beta_0(t) - \lambda_r(t) \cdot r - \lambda_N(t) \cdot (N - 1) - \delta_{\mathbf{p}}(t),
+$$
+
+with $lambda_r ge t alpha_1$, $lambda_N ge t alpha_2$, and bounded remainder $|delta_{mathbf{p}}| le C_1 A K t + C_2 sigma$.
+
+---
+
+# 6. Core Theorems and Proofs
+
+## Theorem A (Joint Thinning in $r$ and $N$)
+
+### Statement
+
+**Assume:**
+
+- (A1–A7) from LOW (bounded noise, monotone $Delta$, symmetric $g$, contractive $mathcal{R}$, etc.);
+- Dimension ansatz $\Delta_{\mathbf{p}} = \alpha_0 + \alpha_1 r + \alpha_2 (N-1) + h(\mathbf{p}) + \varepsilon_{\mathbf{p}}$ with $alpha_1, alpha_2 > 0$;
+- Linear regime $A K_{\mathbf{p}}(t) \le \eta \ll 1$ on $[0, T]$.
+
+**Then** for any roster $\mathcal{P}_{\text{roster}}$ with $(r, N) in [r_{min}, r_{max}] times [2, N_{max}]$:
+
+$$
+\mathbb{E}[Z_{\mathbf{p}}(t)] = \beta_0(t) - \lambda_r(t) \cdot r - \lambda_N(t) \cdot (N - 1) - \delta_{\mathbf{p}}(t),
+$$
+
+with:
+
+- $lambda_r(t) ge t alpha_1 > 0$;
+- $lambda_N(t) ge t alpha_2 > 0$;
+- $|delta_{mathbf{p}}(t)| le C_1 eta t + C_2 sigma$.
+
+Consequently, WLS slopes $\widehat{\lambda}_r$ and $\widehat{\lambda}_N$ are **positive with high probability**.
+
+### Proof Sketch
+
+From the linear-regime solution (Sec. 5.3):
+
+$$
+\log K_{\mathbf{p}}(t) = \log K_{\mathbf{p}}(0) + \big[ (k-1) - \Delta_{\mathbf{p}} \big] t + O(\eta t).
+$$
+
+Substitute $Delta_{mathbf{p}} = alpha_0 + alpha_1 r + alpha_2(N-1) + h + varepsilon$:
+
+$$
+\log K_{\mathbf{p}}(t) = \log K_{\mathbf{p}}(0) + (k - 1 - \alpha_0) t - \alpha_1 r t - \alpha_2 (N-1) t - h t - \varepsilon t + O(\eta t).
+$$
+
+Subtract detuning penalty $g(\delta\omega_{\mathbf{p}})$ (mean-zero after centering by A3) and integrate out bounded noise (A1). Pool over $(r, N)$ bins to get:
+
+$$
+\mathbb{E}[Z_r] = [\text{intercept}] - (\alpha_1 t) r, \quad \mathbb{E}[Z^{(N)}] = [\text{intercept}] - (\alpha_2 t)(N-1).
+$$
+
+Define $\lambda_r(t) := \alpha_1 t$ and $lambda_N(t) := alpha_2 t$. Since $\alpha_1, \alpha_2 > 0$ by assumption, $lambda_r, lambda_N > 0$.
+
+Concentration of WLS estimators follows from standard sandwich SE bounds (same as LOW Theorem 4.2). $\square$
+
+Full proof in **Appendix B.1**.
+
+---
+
+## Theorem B (Down-Set Survivor Geometry)
+
+### Statement
+
+**Assume:**
+
+- $\Delta_{\mathbf{p}}$ is strictly increasing in both $r$ and $N$;
+- Initial strengths $K_{\mathbf{p}}(0)$ satisfy a mild regularity condition (e.g., $K_{\mathbf{p}}(0)$ non-increasing in $r$ for fixed $N$, and in $N$ for fixed $r$, up to bounded fluctuations);
+- Fixed detectability threshold $\tau > 0$ (set via BH-FDR at $q = 0.05$).
+
+**Then** for each RG time $t ge 0$, there exist unique cutoffs $(r^\star(t), N^\star(t))$ such that:
+
+$$
+\mathcal{S}(t) = \{\mathbf{p} : K_{\mathbf{p}}(t) \ge \tau\} = \{(r, N) : r \le r^\star(t), N \le N^\star(t)\}.
+$$
+
+I.e., the survivor set is a **down-set** (joint prefix) in the $(r, N)$ lattice.
+
+### Proof Sketch
+
+**Step 1:** By Lemma 2.3 (from LOW, generalized), if $\Delta_{\mathbf{p}_1} \le \Delta_{\mathbf{p}_2}$ and $K_{mathbf{p}*1}(0) ge K*{mathbf{p}*2}(0)$, then $K*{mathbf{p}*1}(t) ge K*{mathbf{p}_2}(t)$ for all $t$ (comparison principle for logistic flows).
+
+**Step 2:** Since $\Delta_{\mathbf{p}}$ increases in $r$ (holding $N$ fixed) and in $N$ (holding $r$ fixed), we have:
+
+- For $r_1 < r_2$ and same $N$: $\Delta_{(r_1, N)} < \Delta_{(r_2, N)} \Rightarrow K_{(r_1, N)}(t) > K_{(r_2, N)}(t)$ if initially ordered.
+- For $N_1 < N_2$ and same $r$: $Delta_{(r, N_1)} < Delta_{(r, N_2)} Rightarrow K_{(r, N_1)}(t) > K_{(r, N_2)}(t)$.
+
+**Step 3:** Thresholding at $\tau$ induces a cut in each dimension independently. The intersection is a rectangular down-set with corners at $(r^star, N^star)$.
+
+**Uniqueness:** Strict monotonicity of $\Delta_{\mathbf{p}}$ ensures no "holes" (if $(r, N) in mathcal{S}$, then all $(r', N')$ with $r' \le r, N' \le N$ also in $mathcal{S}$). $\square$
+
+Full proof in **Appendix B.2**.
+
+---
+
+## Proposition C (Emergent-Lock Exclusivity)
+
+### Statement
+
+**Assume:**
+
+- Ground-truth dynamics has **zero pairwise coupling**: $\kappa_{(i,j)} = 0$ for all pairs $(i,j)$;
+- There exists a **composite lock** $\mathbf{p}^*$ with $N \ge 3$ and $\kappa_{\mathbf{p}^*} > 0$ (nonlinear $N$-way term);
+- Noise level $\sigma_{\xi}$ is small relative to $kappa_{mathbf{p}^*}$;
+- Windows are sufficiently long ($T_w gg 2pi / min_i omega_i$).
+
+**Then** for small RG time $t > 0$:
+
+$$
+\mathbb{E}[K_{\mathbf{p}^*}(t)] \gg \max_{(i,j) \subset \text{supp}(\mathbf{p}^*)} \mathbb{E}[K_{(i,j)}(t)],
+$$
+
+and $K_{\mathbf{p}^*}$ persists under $\mathcal{R}$ up to the logistic carrying capacity $(k - 1 - Delta_{mathbf{p}^*})/A$.
+
+I.e., the **composite lock is RG-stable** while all pairwise locks remain subcritical (decay or stay near noise floor).
+
+### Proof Sketch
+
+**Microscopic dynamics (from Sec. 2.1, interaction ansatz):**
+
+$$
+\dot{\phi}_i = \omega_i + \kappa_{\mathbf{p}^*} \sin(\mathbf{p}^* \cdot \boldsymbol{\phi}) + \xi_i(t), \quad \kappa_{(i,j)} = 0.
+$$
+
+The phase defect $\Theta_{\mathbf{p}^*} = \mathbf{p}^* \cdot \boldsymbol{\phi}$ satisfies:
+
+$$
+\dot{\Theta}_{\mathbf{p}^*} = \mathbf{p}^* \cdot \boldsymbol{\omega} + \kappa_{\mathbf{p}^*} (\text{supp size}) \sin(\Theta_{\mathbf{p}^*}) + \text{noise}.
+$$
+
+For $\kappa_{\mathbf{p}^*}$ large enough, $\Theta_{\mathbf{p}^*}$ phase-locks (oscillates in a bounded range), yielding $K_{mathbf{p}^*} gg 0$.
+
+Meanwhile, pairwise defects $\Theta_{(i,j)} = p_i \phi_i + p_j \phi_j$ have **no** direct coupling term (since $kappa_{(i,j)} = 0$), so:
+
+$$
+\dot{\Theta}_{(i,j)} = p_i \omega_i + p_j \omega_j + \text{noise}.
+$$
+
+Without a restoring force, $\Theta_{(i,j)}$ drifts (random walk), yielding $K_{(i,j)} \approx 0$ after averaging.
+
+Under RG coarse-graining $\mathcal{R}$ (temporal pooling), the **composite** lock has $(k-1) - \Delta_{\mathbf{p}^*} > 0$ (relevant) while pairwise locks have $(k-1) - \Delta_{(i,j)} < 0$ (irrelevant, assuming higher $\Delta$ for unsupported locks). Thus, $K_{\mathbf{p}^*}$ persists; $K_{(i,j)}$ decays. $\square$
+
+Full proof in **Appendix B.3**.
+
+---
+
+## Corollary (Critical Dimension Shift)
+
+### Statement
+
+Activating an additional ontological layer (moving $k to k + 1$) raises the linear drift intercept in $\Delta_t \log K$ estimates by $+1$, holding $(r, N)$ fixed.
+
+**Proof:** From the flow $frac{dK}{dt} = [(k-1) - Delta]K - AK^2$, the early-time derivative is:
+
+$$
+\Delta_t \log K \approx (k - 1) - \Delta.
+$$
+
+Adding a layer increments $k to k+1$, so:
+
+$$
+\Delta_t \log K' \approx k - \Delta = [(k-1) - \Delta] + 1.
+$$
+
+Regressing $\Delta_t \log K$ on $(r, N)$ before and after layer addition, the **intercept shift** should be $+1$.
+
+**Falsification (CO-4):** If observed shift $\neq 1$ (e.g., 0 or 2), reject the $k-1$ critical-dimension model. $\square$
+
+---
+
+## Corollary (Bandwidth Shrinkage)
+
+### Statement
+
+The **capture bandwidth** $b_{r,N}$ (maximal detuning allowing $K > \tau$ at steady state) scales as:
+
+$$
+b_{r,N} \propto \frac{1}{\sqrt{r \cdot N}}.
+$$
+
+**Proof:** At equilibrium, $K^ *= [(k-1) - Delta]/A$. Require $log K^* - g(deltaomega) ge log tau$. With quadratic $g(deltaomega) approx frac{gamma}{2} deltaomega^2$:
+
+$$
+\delta\omega^2 \le \frac{2}{\gamma} \log\left( \frac{(k-1) - \Delta}{A \tau} \right).
+$$
+
+Since $Delta propto r + N$, the log term decays linearly in $r + N$, giving $b_{r,N} propto (r + N)^{-1/2}$. For joint scaling, approximate as $b_{r,N} \propto (rN)^{-1/2}$ when both vary. $\square$
+
+**Testable prediction (P3):** Empirically estimate $b_{r,N}$ via micro-sweeps; verify power-law decay with exponents $\approx -1/2$ in both $r$ and $N$.
+
+---
+
+# 7. Measurement Protocols and Estimation Pipeline
+
+## 7.1 Roster Design
+
+### Constraints
+
+**Order range:** $r in [r_{min}, r_{max}]$, typically $r_{min} = 2$, $r_{max} in [8, 12]$.
+
+**Support range:** $N in [2, N_{max}]$, typically $N_{\max} \in \{3, 4\}$ (higher $N$ incurs combinatorial explosion).
+
+**Primitive vectors:** Only include $\mathbf{p}$ with $\gcd(p_1, \ldots, p_k) = 1$ (no integer multiples).
+
+**Cross-ontological balance:** Ensure roughly equal representation of:
+
+- **Within-layer** locks ($c(mathbf{p}) = 0$);
+- **Cross-layer** locks ($c(mathbf{p}) = 1$).
+
+**Nested pairwise:** For each $N \ge 3$ lock $mathbf{p}$, include **all** pairwise restrictions $\mathbf{q}$ with $\text{supp}(\mathbf{q}) \subset \text{supp}(\mathbf{p})$ and $\|\mathbf{q}\|_1 \le \|\mathbf{p}\|_1$ in the roster. This enables CO-1 (emergence test).
+
+### Example Roster ($k = 3$ layers, $N_{max} = 3$, $r_{max} = 6$)
+
+**Pairwise ($N = 2$):**
+
+$(1, -1, 0), (1, 0, -1), (0, 1, -1), (2, -1, 0), (1, -2, 0), \ldots$
+
+**Triadic ($N = 3$):**
+
+$(1, -1, 1), (1, 1, -1), (2, -1, -1), (1, -1, 2), \ldots$
+
+**Primitive check:** $\gcd(1, -1, 1) = 1$ ✓; $\gcd(2, -2, 2) = 2$ ✗ (exclude).
+
+**Total size:** Typically $\mathcal{O}(10^2 \text{--} 10^3)$ vectors for $k le 4$, $N_{max} le 4$, $r_{max} le 10$.
+
+---
+
+## 7.2 Synchronized Windowing and Pooling
+
+### Window Construction
+
+**1. Common time base:** All layers $X_1, \ldots, X_k$ recorded on identical time axis $t in [0, T_{text{total}}]$.
+
+**2. Sliding windows:** $I_w = [t_w, t_w + T_w]$ with stride $s$ and overlap $rho = 1 - s/T_w$. Typical values: $T_w \in [1, 4]$ seconds, $rho = 0.5$.
+
+**3. Quality control:**
+
+- Reject windows with missing data in any layer;
+- Require minimum cycle count: $T_w \cdot \min_i \omega_i / (2\pi) \ge 8$ (ensures at least 8 periods of slowest oscillation).
+
+### Temporal Pooling (RG Operator $mathcal{R}$)
+
+**Median in log-space:** For each $mathbf{p}$, compute $\widehat{K}_{\mathbf{p}}(w)$ on windows $w = 1, ldots, W$. Pool via:
+
+$$
+K_{\mathbf{p}}^{(t=1)} = \exp\left( \text{median}_{w \in \text{block}} \log \widehat{K}_{\mathbf{p}}(w) \right),
+$$
+
+where "block" groups consecutive windows (e.g., every 10 windows $\to$ 1 pooled estimate).
+
+Iterate to get $K_{\mathbf{p}}^{(t=2)}, K_{\mathbf{p}}^{(t=3)}, \ldots$
+
+**Critical:** Same pooling parameters $(\text{stride}, T_w, \rho)$ for **all layers** (R3 uniformity requirement from Sec. 2.5).
+
+---
+
+## 7.4 Robustness Controls and Adversarial Tests
+
+### Dual Detuning-Penalty Functions (CO-2 Robustness)
+
+**Requirement:** Pre-register **two** penalty functions $g_1$ (quadratic-saturating) and $g_2$ (Huber) with distinct saturation behaviors.
+
+**Protocol:**
+
+1. Compute $Z_{\mathbf{p}}^{(1)} = \log K_{\mathbf{p}} - g_1(\delta\omega_{\mathbf{p}})$ and $Z_{\mathbf{p}}^{(2)} = \log K_{\mathbf{p}} - g_2(\delta\omega_{\mathbf{p}})$ for all $\mathbf{p}$
+2. Estimate $\widehat{\lambda}_r^{(1)}, \widehat{\lambda}_N^{(1)}$ and $\widehat{\lambda}_r^{(2)}, \widehat{\lambda}_N^{(2)}$
+3. **Pass criterion:** Both sets of slopes positive with $`p < 0.05`$; emergent winners overlap ≥80% (Jaccard)
+
+**Interpretation:** If results flip between $g_1$ and $`g_2`$, the thinning law is an artifact of detuning normalization, not genuine LOW structure.
+
+---
+
+### Jittered-Window Control (Transient-Lock Test)
+
+**Attack:** Synchronized windows can align repeating transients (evoked responses, stimulus artifacts) across layers, mimicking phase locking.
+
+**Test 1 (Common jitter):**
+
+- Shift all window start times by random offset $\epsilon \sim \mathcal{U}(-T_{\text{jit}}, T_{\text{jit}})$ (same $\epsilon$ for all layers)
+- Recompute $K_{\mathbf{p}}$ on jittered windows
+- **Stable lock:** $|K_{\mathbf{p}}^{\text{jittered}} - K_{\mathbf{p}}^{\text{original}}| \le \sigma_{\text{tol}}$ (pre-registered tolerance)
+
+**Test 2 (Layer-specific jitter):**
+
+- Apply independent jitters $\epsilon_X \sim \mathcal{U}(-T_{\text{jit}}, T_{\text{jit}})$ per layer
+- **Pass criterion:** True locks degrade **gracefully** (linear decay); transient-driven "locks" **collapse** (exponential drop)
+
+Typical $T_{\text{jit}} \approx 0.05 \cdot T_w$ (5% of window length).
+
+---
+
+### Geometry-Matched Roster (Spatial Confounder Control)
+
+**Attack:** Spatial distance $h(\mathbf{p})$ (e.g., physical separation of recording sites) can dominate thinning slopes, masking integer-order effects.
+
+**Protocol:**
+
+1. For each composite $\mathbf{p}$ with geometry $`h(\mathbf{p})`$, create **decoy** $\mathbf{p}'$ with:
+    - Same support size $N$ and order $r$
+    - Same spatial footprint $h(\mathbf{p}') = h(\mathbf{p})$
+    - **Shuffled** integer coefficients (random sign flips, magnitude permutations)
+2. Compute $\Delta Z = Z_{\mathbf{p}} - Z_{\mathbf{p}'}$ (difference cancels $`h`$)
+3. Regress $\Delta Z$ on $r, N$ to estimate **geometry-corrected** slopes $\tilde{\lambda}_r, \tilde{\lambda}_N$
+
+**Pass criterion (CO-2/CO-2b):** Both ordinary **and** geometry-matched slopes positive.
+
+---
+
+### Pairwise Search Expansion (B4 Patch)
+
+**Attack:** Comparing composite order $r$ to pairwise orders $\le r$ underestimates pairwise explanatory power; a higher-order pair can "explain" the composite.
+
+**Fix:** Set $r_{\text{max}}^{\text{pair}} > r_{\text{max}}^{\text{composite}}$ using:
+
+$$
+r_{\text{max}}^{\text{pair}} = \min\left\{ 2 r_{\text{max}}, \; r^* \text{ where null CI width plateaus} \right\}
+$$
+
+**Emergence score revision:**
+
+$$
+\mathcal{E}_{\mathbf{p}} = Z_{\mathbf{p}} - \max_{\substack{(i,j) \subset \text{supp}(\mathbf{p}) \\ \|\mathbf{q}\|_1 \le r_{\text{max}}^{\text{pair}}}} Z_{\mathbf{q}}
+$$
+
+Apply Bonferroni or BH correction over the **expanded** pairwise set.
+
+---
+
+## 7.3 Flow Parameter Identification
+
+### Early-Time Differencing
+
+For small $t$ in the linear regime, approximate:
+
+$$
+\Delta_t \log K_{\mathbf{p}} := \log K_{\mathbf{p}}(t + \Delta t) - \log K_{\mathbf{p}}(t) \approx \big[ (k-1) - \Delta_{\mathbf{p}} \big] \Delta t - A \overline{K}_{\mathbf{p}} \Delta t,
+$$
+
+where $\overline{K}_{\mathbf{p}} = [K_{\mathbf{p}}(t) + K_{\mathbf{p}}(t + \Delta t)]/2$ is the midpoint.
+
+### Regression on $(r, N)$
+
+**Step 1:** Compute $\Delta_t \log K_{\mathbf{p}}$ for all $\mathbf{p}$ in roster, at $t = 0 \to 1$ (first RG step).
+
+**Step 2:** Regress intercept on $(r, N)$:
+
+$$
+\Delta_t \log K_{\mathbf{p}} + A \overline{K}_{\mathbf{p}} \Delta t \approx (k - 1 - \alpha_0) \Delta t - \alpha_1 r \Delta t - \alpha_2 (N-1) \Delta t - \alpha_{\text{XO}} c(\mathbf{p}) \Delta t.
+$$
+
+**Step 3:** Estimate:
+
+- **$alpha_1$:** Coefficient of $r$ (divided by $Delta t$);
+- **$alpha_2$:** Coefficient of $(N-1)$;
+- **$alpha_{text{XO}}$:** Coefficient of $c(mathbf{p})$;
+- **$A$:** Common slope in $overline{K
+
+_{mathbf{p}}$ term.
+
+---
+
+# 8. Identifiability Controls and Leakage Audits
+
+## 8.1 Pairwise-Residual Audit (Kernel Residualization)
+
+**Attack vector:** Bandpass filtering or linear mixing can create spurious composite locks when an unobserved "ghost" oscillator drives multiple layers with small coefficients.
+
+**Protocol:**
+
+1. **Linear residualization:** For each observed layer $`X_i`$, regress phases on all other layers with bandwise lags:
+    
+    $$
+    \phi_{X_i}^{\perp} = \phi_{X_i} - \sum_{j \neq i} \sum_{\ell} \beta_{ij\ell} \phi_{X_j}(t - \ell \Delta t)
+    $$
+    
+    where lag range $\ell \in [-L_{\text{max}}, L_{\text{max}}]$ spans plausible coupling delays.
+    
+2. **Kernel extension:** Add RBF features $\exp(-\|\phi_{X_j}(t-\ell) - \phi_{X_j}(t'-\ell)\|^2 / 2\sigma^2)$ to capture nonlinear leakage.
+3. **Recompute emergence:** Calculate $Z_{\mathbf{p}}^{\perp}$ on residualized phases $`\phi^{\perp}`$.
+
+**Pass criterion (CO-1 residual survival):** $\mathcal{E}_{\mathbf{p}}^{\perp} > 0$ with same FDR threshold. If emergent lock vanishes after residualization, classify as **pairwise-driven artifact**.
+
+---
+
+## 8.2 Latent-Clock Null (Rank-1 Phase Template)
+
+**Attack vector:** A single hidden oscillator $\psi(t)$ drives all layers with different gains/delays; correlated timing jitters can cancel in $`\mathbf{p} \cdot \boldsymbol{\phi}`$, yielding false $\mathcal{E} > 0$ without genuine N-way coupling.
+
+**Latent-factor extraction:**
+
+1. **Procrustes alignment:** Fit shared phase template via:
+    
+    $$
+    \widehat{\psi}(t) = \arg\min_{\psi} \sum_{i=1}^k \|\phi_{X_i}(t) - a_i \psi(t) - b_i\|^2
+    $$
+    
+    with unit-norm constraint $`\|\psi\|_2 = 1`$.
+    
+2. **Karcher mean (wrapped):** For phase data on $`\mathbb{S}^1`$, use Fréchet mean:
+    
+    $$
+    \widehat{\psi}(t) = \arg\min_{\psi} \sum_{i=1}^k d_{\mathbb{S}^1}^2(\phi_{X_i}(t), a_i \psi(t) + b_i)
+    $$
+    
+3. **Residual phases:** Compute $\phi_{X_i}^{\perp}(t) = \phi_{X_i}(t) - \widehat{a}_i \widehat{\psi}(t)$ (project out common drive).
+
+**Pass criterion (CO-11):** Emergent locks must survive: $\mathcal{E}_{\mathbf{p}}^{\perp} > 0$ on latent-corrected phases. Failure indicates **common-drive confound**.
+
+---
+
+## 8.3 Effective Layer Rank Test
+
+**Attack vector:** Declared $k$ layers are not functionally independent (e.g., two EEG channels with same source, duplicate sensors). Critical dimension $k-1$ is then mis-specified.
+
+**Rank estimation:**
+
+1. **Phase PCA/CCA:** Compute covariance of $\dot{\boldsymbol{\phi}}(t)$ (instantaneous frequency trajectories):
+    
+    $$
+    \text{Cov}(\dot{\boldsymbol{\phi}}) = \mathbb{E}[(\dot{\boldsymbol{\phi}} - \boldsymbol{\mu})(\dot{\boldsymbol{\phi}} - \boldsymbol{\mu})^\top]
+    $$
+    
+2. **Effective rank:** Count eigenvalues above noise floor (e.g., parallel analysis, bootstrapped null):
+    
+    $$
+    k_{\text{eff}} = \sum_{i=1}^k \mathbb{1}\{\lambda_i > \lambda_i^{\text{null}, 95\%}\}
+    $$
+    
+3. **Manifold dimension:** Alternatively, use local tangent space dimensionality (ISOMAP, LLE) on phase trajectories.
+
+**Pass criterion (CO-10 rank consistency):**
+
+- Intercept shift $\Delta_{\text{intercept}} \approx +1$ only when adding a layer that increases $k_{\text{eff}}$
+- Adding a **sham layer** (duplicate + noise) must yield $\Delta_{\text{intercept}} \approx 0$
+- If $`k_{\text{eff}} < k_{\text{declared}}`$, redefine $k := k_{\text{eff}}$ before flow tests
+
+---
+
+## 8.4 Harmonic Censoring
+
+**Attack vector:** Physical pairwise lock at $(1:2)$ between A and B leaks into spurious triadic lock via harmonic content of a third process C.
+
+**Protocol:**
+
+1. **Harmonic mask:** For each component $X_i$ with dominant frequency $`f_i`$, construct notch filters at $\{2f_i, 3f_i, \ldots, Mf_i\}$ (typically $`M = 5`$).
+2. **Recompute with censoring:** Apply masks to all layers, re-extract phases $`\phi_{\text{censored}}`$, recompute $`Z_{\mathbf{p}}`$.
+3. **Harmonic shadow test:** For each emergent lock $`\mathbf{p}`$, check if $\mathbf{p} / \gcd(\mathbf{p})$ matches a harmonic pattern (e.g., $(1, -2, 1) \to$ 2nd harmonic of first component).
+
+**Pass criterion (CO-12):** Emergent locks persist after harmonic notching. Classify failures as **harmonic shadows** (not genuine emergent structure).
+
+---
+
+# 9. Falsification Gates (CO-1 through CO-12)
+
+<aside>
+⚠️
+
+**Hard Gates Philosophy:** Each gate is a **binary pass/fail test** with pre-registered thresholds. Failing **any single gate** invalidates the corresponding claim—no partial credit, no post-hoc rationalization. Gates must be run on **holdout data** after pilot tuning.
+
+</aside>
+
+---
+
+## CO-1: N-Emergence Detection (Raw + Residualized)
+
+**Claim:** There exists at least one composite lock $\mathbf{p}$ with $N \ge 3$ that is pairwise-invisible yet RG-stable.
+
+**Criteria (all must pass):**
+
+1. **Composite detection:** $Z_{\mathbf{p}} > \tau_{\text{FDR}}$ (BH-corrected threshold at $`q = 0.05`$)
+2. **Pairwise failure:** All pairwise locks $\mathbf{q}$ with $\text{supp}(\mathbf{q}) \subset \text{supp}(\mathbf{p})$ and $\|\mathbf{q}\|_1 \le r_{\text{max}}^{\text{pair}}$ have $Z_{\mathbf{q}} < \tau_{\text{FDR}}$
+3. **Positive emergence:** $\mathcal{E}_{\mathbf{p}} = Z_{\mathbf{p}} - \max_{\text{pairs}} Z_{\mathbf{q}} > 0$
+4. **Kernel-residual survival:** $\mathcal{E}_{\mathbf{p}}^{\perp} > 0$ after kernel residualization (Sec. 8.1)
+5. **Latent-clock survival (CO-1b):** $\mathcal{E}_{\mathbf{p}}^{\perp} > 0$ after rank-1 template removal (Sec. 8.2)
+6. **RG stability:** $\mathcal{E}_{\mathbf{p}}(t)$ non-decreasing over $t = 0 \to 1$ (one RG step)
+
+**Failure mode:** If no $\mathbf{p}$ satisfies all six criteria, **reject N-emergence claim** for this dataset.
+
+---
+
+## CO-2: Order-Thinning Slope (Geometry-Matched + Dual-$`g`$ Robustness)
+
+**Claim:** Coupling strength decays exponentially with integer order $`r`$: $\mathbb{E}[Z_r] \approx \beta_0 - \lambda_r r$ with $`\lambda_r > 0`$.
+
+**Criteria:**
+
+1. **Ordinary WLS:** $\widehat{\lambda}_r > 0$ with $p < 0.05$ (one-sided test), heteroskedastic-robust SEs
+2. **Geometry-matched slope:** $\tilde{\lambda}_r > 0$ on within-pair differences $\Delta Z = Z_{\mathbf{p}} - Z_{\mathbf{p}'}$ (Sec. 7.4)
+3. **Dual-$`g`$ agreement:** Both $\widehat{\lambda}_r^{(g_1)} > 0$ and $\widehat{\lambda}_r^{(g_2)} > 0$ for pre-registered penalty functions $g_1, g_2$
+4. **Magnitude consistency:** $|\widehat{\lambda}_r^{(g_1)} - \widehat{\lambda}_r^{(g_2)}| / \text{mean} < 0.5$ (no more than 50% relative difference)
+
+**Failure mode:** If any slope $\le 0$ or sign flips across $`g`$-functions, **reject order-thinning law**.
+
+---
+
+## CO-2b: Support-Thinning Slope
+
+**Claim:** Higher-arity locks are harder to maintain: $\mathbb{E}[Z^{(N)}] \approx \gamma_0 - \lambda_N (N-1)$ with $`\lambda_N > 0`$.
+
+**Criteria:** Same four tests as CO-2, replacing $r \to N$ and $`\lambda_r \to \lambda_N`$.
+
+**Failure mode:** If $`\widehat{\lambda}_N \le 0`$, **reject support-penalty claim**.
+
+---
+
+## CO-3: Down-Set Structure + Farey Stability
+
+**Claim:** Survivor set $\mathcal{S}(t) = \{\mathbf{p} : K_{\mathbf{p}}(t) \ge \tau\}$ forms a rectangular down-set (order ideal) in $(r, N)$ space.
+
+**Criteria:**
+
+1. **No holes:** If $`(r, N) \in \mathcal{S}`$, then all $(r', N')$ with $r' \le r, N' \le N$ also in $\mathcal{S}$
+2. **Unique cut:** Cutoffs $(r^\star, N^\star)$ uniquely defined (no ambiguity up to ±1 discretization)
+3. **Farey stability:** Across $M = 5$ roster variants (same $`r_{\text{max}}`$, perturbed integer sets), Jaccard similarity $J(\mathcal{S}_i, \mathcal{S}_j) \ge 0.75$ for all pairs $i, j$
+
+**Failure mode:** Holes, multiple cuts, or Jaccard $< 0.75$ → **reject down-set geometry claim**.
+
+---
+
+## CO-4: $`k`$-Criticality Shift (Independent Layer + Sham Control)
+
+**Claim:** Critical dimension is $`k-1`$, where $k$ = number of independent layers. Adding a layer shifts RG-flow intercept by $`+1`$.
+
+**Protocol:**
+
+1. **Baseline:** Estimate intercept $\beta_0 = (k-1) - \alpha_0$ from $\Delta_t \log K$ regression on $(r, N)$
+2. **Add independent layer:** Include a new ontology $X_{k+1}$ with $k_{\text{eff}} \to k_{\text{eff}} + 1$ (verified via rank test, Sec. 8.3)
+3. **Add sham layer:** Duplicate existing layer $X_1'(t) = X_1(t) + \xi(t)$ with small noise; $k_{\text{eff}}$ unchanged
+
+**Criteria:**
+
+1. **Independent shift:** $\beta_0^{\text{new}} - \beta_0^{\text{baseline}} = 1 \pm 0.2$ (within 20% tolerance)
+2. **Sham null:** $\beta_0^{\text{sham}} - \beta_0^{\text{baseline}} = 0 \pm 0.2$
+3. **Statistical significance:** Both tested via $`F`$-test for intercept change, $p < 0.05$
+
+**Failure mode:** Wrong shift magnitude or sham-layer shift $\neq 0$ → **reject** $k-1$ **criticality model**.
+
+---
+
+## CO-5: Cross-Ontology Penalty Sign Test
+
+**Claim:** Mixing layers incurs a cost $`\alpha_{\text{XO}} \cdot c(\mathbf{p})`$; sign of $\alpha_{\text{XO}}$ pre-registered per domain.
+
+**Criteria:**
+
+1. **Pre-registration:** Before analysis, declare expected sign (positive, negative, or zero) based on domain knowledge
+2. **Estimated sign:** $\widehat{\alpha}_{\text{XO}}$ from regression $\Delta_t \log K \sim r + N + c(\mathbf{p})$
+3. **Agreement:** Observed sign matches pre-registered sign with $p < 0.05$ (one-sided test)
+4. **Effect size:** $|\widehat{\alpha}_{\text{XO}}| / \text{SE} > 2$ (minimal strength requirement)
+
+**Failure mode:** Sign flip → **falsification of domain model** (not COPL framework). Report as "cross-layer penalty not present or opposite direction."
+
+---
+
+## CO-6: Brittleness Ladder
+
+**Claim:** Detuning sensitivity $\mathcal{B}_{\mathbf{p}}$ increases with order $r$ and support $`N`$.
+
+**Criteria:**
+
+1. **Order monotonicity:** Median $\mathcal{B}$ non-decreasing in $r$ (Mann-Kendall $`p < 0.05`$)
+2. **Support monotonicity:** Median $\mathcal{B}$ non-decreasing in $N$ (Mann-Kendall $`p < 0.05`$)
+3. **Pairwise Spearman:** $\rho(\mathcal{B}_{\mathbf{p}}, r) > 0$ and $\rho(\mathcal{B}_{\mathbf{p}}, N) > 0$ with $p < 0.05$
+
+**Failure mode:** Decreasing trend or negative correlation → **reject brittleness-order coupling**.
+
+---
+
+## CO-7: Permutation Discipline (Circular-Block + Multiverse)
+
+**Claim:** Discoveries are robust to temporal resampling and analyst choices.
+
+**Criteria:**
+
+1. **Circular-block permutation:** Use automatic block-length selection (Politis–White); generate $B = 1000$ null realizations preserving autocorrelation
+2. **Max-T correction:** Emergent locks must survive FWER control (not just FDR) at $\alpha = 0.05$
+3. **Multiverse analysis:** Run all $M$ pre-specified analysis branches (filter choices, pooling parameters, detuning functions); require **majority vote** (≥70% of branches) for each gate
+4. **Pair-conserving shuffle:** For emergence scores, permute "composite vs pairwise" labels within support sets
+
+**Failure mode:** If $< 70\%$ of multiverse branches pass, or if max-T fails → **reject robustness claim**.
+
+---
+
+## CO-8: Desync Collapse (Jitter Test)
+
+**Claim:** Emergent locks are genuine phase-locking, not transient alignment artifacts.
+
+**Criteria:**
+
+1. **Common jitter stability:** $|\mathcal{E}_{\mathbf{p}}^{\text{jitter}} - \mathcal{E}_{\mathbf{p}}^{\text{original}}| < 0.1 \cdot |\mathcal{E}_{\mathbf{p}}^{\text{original}}|$ under uniform window shifts (Sec. 7.4)
+2. **Layer-specific jitter collapse:** $\mathcal{E}_{\mathbf{p}}^{\text{indep-jitter}} \le 0.5 \cdot \mathcal{E}_{\mathbf{p}}^{\text{original}}$ under independent layer jitters (graceful degradation, not preservation)
+3. **Pre-registered tolerance:** Stability band $\sigma_{\text{tol}}$ determined from pilot data
+
+**Failure mode:** Stable under independent jitters → **synchronization artifact**, not true phase lock.
+
+---
+
+## CO-9: RG-Time Placebo (Nonstationarity Control)
+
+**Claim:** Positive RG-flow intercept is due to LOW mechanism, not frequency drift.
+
+**Criteria:**
+
+1. **Block-permute windows:** Scramble temporal order of analysis windows before applying $\mathcal{R}$
+2. **Intercept null:** Estimated $\beta_0^{\text{scrambled}} \approx 0$ (within CI: $`|\beta_0^{\text{scrambled}}| < 0.5`$)
+3. **Original positive:** $\beta_0^{\text{original}} > 1.0$ for $k \ge 3$ systems
+
+**Failure mode:** Positive intercept persists under scrambling → **nonstationary confound**, not RG growth.
+
+---
+
+## CO-10: Rank Consistency (Effective Layer Test)
+
+**Claim:** Declared $k$ matches functionally independent phase processes.
+
+**Criteria:**
+
+1. **Rank test:** $k_{\text{eff}} = k_{\text{declared}}$ from phase PCA (Sec. 8.3)
+2. **Sham-layer null:** Adding duplicate layer yields intercept shift $\approx 0$ (tested in CO-4)
+3. **Independent-layer shift:** Adding new source yields shift $\approx +1$ **only if** $k_{\text{eff}} \to k_{\text{eff}} + 1$
+
+**Failure mode:** $k_{\text{eff}} < k_{\text{declared}}$ and claims proceed with wrong $k$ → **reject critical-dimension specification**.
+
+---
+
+## CO-11: Residual Survival (Latent-Clock Null)
+
+**Claim:** Emergent locks are not driven by shared latent oscillator.
+
+**Criteria:**
+
+1. **Rank-1 template:** Fit $\widehat{\psi}(t)$ via Procrustes/Karcher mean (Sec. 8.2)
+2. **Residual emergence:** $\mathcal{E}_{\mathbf{p}}^{\perp} > 0$ after projecting out $\widehat{\psi}$
+3. **Magnitude retention:** $\mathcal{E}_{\mathbf{p}}^{\perp} \ge 0.5 \cdot \mathcal{E}_{\mathbf{p}}$ (emergent structure not fully explained by common drive)
+
+**Failure mode:** $\mathcal{E}_{\mathbf{p}}^{\perp} \le 0$ → **common-drive confound**.
+
+---
+
+## CO-12: Harmonic Robustness
+
+**Claim:** Emergent locks are not harmonic shadows of pairwise structure.
+
+**Criteria:**
+
+1. **Harmonic censoring:** Apply notch filters at $\{2f_i, 3f_i, \ldots, 5f_i\}$ for each dominant frequency $f_i$ (Sec. 8.4)
+2. **Persistence:** $\mathcal{E}_{\mathbf{p}}^{\text{censored}} > 0$ after harmonic removal
+3. **Pattern check:** $\mathbf{p} / \gcd(\mathbf{p})$ is **not** a harmonic pattern (e.g., $(1, -2, 1)$ flagged as 2nd-harmonic suspect)
+
+**Failure mode:** Vanishes under censoring or matches harmonic pattern → classify as **harmonic shadow**, not emergent.
